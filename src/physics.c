@@ -1,7 +1,4 @@
-#include <math.h>
 #include "physics.h"
-#include "simulation.h"
-#include "raylib.h"
 
 static float get_distance(SimulationBody b1, SimulationBody b2){
    return sqrt(pow(b2.position.x - b1.position.x, 2) + pow(b2.position.y - b1.position.y, 2));

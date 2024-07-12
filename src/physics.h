@@ -2,6 +2,8 @@
 #define _PHYSICS_H
 
 #include "simulation.h"
+#include "raylib.h"
+#include <math.h>
 
 #define G_CONST         6.6743e-11
 
