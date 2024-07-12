@@ -40,8 +40,8 @@ void debug_simulation(Simulation simulation){
 }
 
 int main (){
-    const int screenWidth = 2200;
-    const int screenHeight = 1400;
+    const int screenWidth = 1200;
+    const int screenHeight = 750;
     srand(time(NULL));
     InitWindow(screenWidth, screenHeight, "StarSim2D");
 
@@ -76,6 +76,9 @@ int main (){
     }
 
     while (!WindowShouldClose()){
+        if(IsKeyPressed(KEY_F11)){
+            ToggleFullscreen();
+        }
         update_camera_pos(&camera);        
         update_zoom(&camera);
         update_velocities(&simulation);
