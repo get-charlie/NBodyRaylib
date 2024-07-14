@@ -1,7 +1,6 @@
 #ifndef _PHYSICS_H
 #define _PHYSICS_H
 
-#include "simulation.h"
 #include "raylib.h"
 #include <math.h>
 
@@ -10,8 +9,16 @@
 #define SUN_MASS        1.9891e30
 #define JUPITER_MASS    1.899e27
 #define EARTH_MASS      5.9722e24
+#define AU              1.496e11
 
-void update_positions(Simulation* simulation);
-void update_velocities(Simulation* simulation);
+#define DIST_SCALE      AU / 1e6
+
+#include "simulation.h"
+
+void update_simulation(Simulation* simulation, double tSpeed);
+
+void update_positions(Simulation* simulation, double tSpeed);
+void update_velocities(Simulation* simulation, double tSpeed);
+void update_collisions(Simulation* simulation);
 
 #endif
