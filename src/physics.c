@@ -3,8 +3,6 @@
 #include <stdio.h>
 #include <string.h>
 
-
-
 static double get_distance(SimulationBody b1, SimulationBody b2){
     return  sqrt(pow(b2.position.x - b1.position.x, 2) + pow(b2.position.y - b1.position.y, 2));
 }
@@ -20,24 +18,6 @@ static void update_body_vel(SimulationBody* update, SimulationBody reference, do
     Vector2 vF = get_gforce(*update, reference);
     update->velocity.x += (vF.x / update->mass) * GetFrameTime() * tSpeed;
     update->velocity.y += (vF.y / update->mass) * GetFrameTime() * tSpeed;
-}
-void update_velocities(Simulation* simulation, double tSpeed){
-    for(unsigned i = 0; i < simulation->num_bodies; i++){
-        for(unsigned j = i + 1; j < simulation->num_bodies; j++){
-            if(i != j){
-                update_body_vel(&simulation->bodies[i], simulation->bodies[j], tSpeed);
-                update_body_vel(&simulation->bodies[j], simulation->bodies[i], tSpeed);
-            }
-        }
-    }
-}
-void update_positions(Simulation* simulation, double tSpeed){
-    for(unsigned i = 0; i < simulation->num_bodies; i++){
-        SimulationBody body = simulation->bodies[i];
-        body.position.x += body.velocity.x;
-        body.position.y += body.velocity.y;
-        simulation->bodies[i] = body;
-    }
 }
 
 static Color color_average(Color c1, Color c2){
@@ -70,7 +50,7 @@ static SimulationBody merge_bodies(SimulationBody b1, SimulationBody b2){
 static bool body_collision(SimulationBody b1, SimulationBody b2){
     return get_distance(b1, b2) <= b1.radius + b2.radius;
 }
-void update_collisions(Simulation* simulation){
+static void update_collisions(Simulation* simulation){
     for(unsigned i = 0; i < simulation->num_bodies; i++){
         for(unsigned j = i + 1; j < simulation->num_bodies; j++){
             if(i != j && body_collision(simulation->bodies[i], simulation->bodies[j])){

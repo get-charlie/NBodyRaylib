@@ -78,9 +78,6 @@ int main (){
         debug_simulation(simulation);
         update_camera_pos(&camera);        
         update_zoom(&camera);
-        // update_velocities(&simulation);
-        // update_positions(&simulation);
-        // update_collisions(&simulation);
         update_simulation(&simulation, tSpeed);
         remove_infinity(&simulation);
         draw(camera, simulation, tSpeed);

@@ -17,8 +17,5 @@
 
 void update_simulation(Simulation* simulation, double tSpeed);
 
-void update_positions(Simulation* simulation, double tSpeed);
-void update_velocities(Simulation* simulation, double tSpeed);
-void update_collisions(Simulation* simulation);
 
 #endif
