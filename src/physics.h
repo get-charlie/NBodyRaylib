@@ -10,12 +10,15 @@
 #define JUPITER_MASS    1.899e27
 #define EARTH_MASS      5.9722e24
 #define AU              1.496e11
+#define SIM_AU          1e5
 
-#define DIST_SCALE      AU / 1e6
+#define SCALE_FACTOR    (AU / SIM_AU)             // AU to game meters (px)
+#define KM_S            (6.6846e-9 * SIM_AU)      
 
 #include "simulation.h"
 
-void update_simulation(Simulation* simulation, double tSpeed);
 
+void update_simulation(Simulation* simulation, double tSpeed);
+void update_collisions(Simulation* simulation);
 
 #endif

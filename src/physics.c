@@ -3,11 +3,11 @@
 #include <stdio.h>
 #include <string.h>
 
-static double get_distance(SimulationBody b1, SimulationBody b2){
+static double get_distance(SimulationBody b1, SimulationBody b2){ // TODO make distance "public" and work with vectors instead of bodies
     return  sqrt(pow(b2.position.x - b1.position.x, 2) + pow(b2.position.y - b1.position.y, 2));
 }
 static Vector2 get_gforce(SimulationBody b1, SimulationBody b2){
-    double d = get_distance(b1, b2) * DIST_SCALE;
+    double d = get_distance(b1, b2) * SCALE_FACTOR;
     double F = (G_CONST * b1.mass * b2.mass) / pow(d, 2);
     Vector2 vF;
     vF.x = (F * (b2.position.x - b1.position.x)) / d;
@@ -29,11 +29,7 @@ static Color color_average(Color c1, Color c2){
     return color;
 }
 static SimulationBody get_more_massive(SimulationBody b1, SimulationBody b2){
-    if(b1.mass > b2.mass){
-        return b1;
-    }else{
-        return b2;
-    }
+    return b1.mass > b2.mass ? b1 : b2;
 }
 static double get_new_radius(double r1, double r2){
     return cbrt(pow(r1, 3) + pow(r2, 3));
@@ -45,14 +41,15 @@ static SimulationBody merge_bodies(SimulationBody b1, SimulationBody b2){
     new.color = get_more_massive(b1, b2).color;
     new.position = get_more_massive(b1, b2).position;
     new.velocity = get_more_massive(b1, b2).velocity; // TODO add velocities according to physics
+    strncpy(new.name, get_more_massive(b1, b2).name, NAME_LEN);
     return new;
 }
 static bool body_collision(SimulationBody b1, SimulationBody b2){
     return get_distance(b1, b2) <= b1.radius + b2.radius;
 }
-static void update_collisions(Simulation* simulation){
-    for(unsigned i = 0; i < simulation->num_bodies; i++){
-        for(unsigned j = i + 1; j < simulation->num_bodies; j++){
+void update_collisions(Simulation* simulation){
+    for(unsigned i = 0; i < simulation->count; i++){
+        for(unsigned j = i + 1; j < simulation->count; j++){
             if(i != j && body_collision(simulation->bodies[i], simulation->bodies[j])){
                 simulation->bodies[i] = merge_bodies(simulation->bodies[i], simulation->bodies[j]);
                 remove_simulation_body(simulation, j);
@@ -62,8 +59,8 @@ static void update_collisions(Simulation* simulation){
     }
 }
 void update_simulation(Simulation* simulation, double tSpeed){
-    for(unsigned i = 0; i < simulation->num_bodies; i++){
-        for(unsigned j = i + 1; j < simulation->num_bodies; j++){
+    for(unsigned i = 0; i < simulation->count; i++){
+        for(unsigned j = i + 1; j < simulation->count; j++){
             if(i != j){
                 update_body_vel(&simulation->bodies[i], simulation->bodies[j], tSpeed);
                 update_body_vel(&simulation->bodies[j], simulation->bodies[i], tSpeed);
@@ -74,10 +71,7 @@ void update_simulation(Simulation* simulation, double tSpeed){
         body.position.y += body.velocity.y * GetFrameTime() * tSpeed;
         simulation->bodies[i] = body;
     }
-    update_collisions(simulation);
 }
-
-
 
 
 

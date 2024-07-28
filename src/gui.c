@@ -28,7 +28,7 @@ static float roundNearest10(float num) {
     return pow(10, exponent);
 }
 
-void draw(Camera2D camera, Simulation simulation, double tSpeed){
+void draw(Camera2D camera, Simulation simulation, DisplayFlags flags){
     BeginDrawing();
         ClearBackground(BLACK);
         BeginMode2D(camera);
@@ -56,16 +56,24 @@ void draw(Camera2D camera, Simulation simulation, double tSpeed){
                 step -= GRID_STEP * mul;
             }
             // Draw asix lines
-            DrawLine(0, -GRID_LEN, 0, GRID_LEN, WHITE);
-            DrawLine(-GRID_LEN, 0, GRID_LEN, 0, WHITE);
+            DrawLine(0, -GRID_LEN, 0, GRID_LEN, RED);
+            DrawLine(-GRID_LEN, 0, GRID_LEN, 0, BLUE);
             // Draw bodies
-            for(unsigned i = 0; i < simulation.num_bodies; i++){
+            for(unsigned i = 0; i < simulation.count; i++){
                 SimulationBody body = simulation.bodies[i];
+                // Draw trayectories
+                if (body.trayectory.count > 1) {
+                    for(unsigned j = 1; j < body.trayectory.count; j++){
+                        DrawLineV(body.trayectory.points[j-1], body.trayectory.points[j], body.color);
+                    }
+                    DrawLineV(body.trayectory.points[body.trayectory.count-1], body.position, body.color);
+                }
+                DrawLineV(body.trayectory.points[body.trayectory.count-1], body.position, body.color);
                 DrawCircle(body.position.x, body.position.y, body.radius, body.color);
+                DrawText(TextFormat("%s", body.name), body.position.x, body.position.y - (1/camera.zoom) * 15, (1/camera.zoom) * 25, WHITE);
             }
         EndMode2D();
-        DrawText(TextFormat("FPS: %d Bodies: %d tSpeed: %.0lf Z: %f", GetFPS(), simulation.num_bodies, tSpeed, camera.zoom), 30, 30, 40, LIGHTGRAY);
-        //DrawText(TextFormat("FPS: %d", GetFPS()), camera.offset.x, camera.offset.y, (1 / camera.zoom) * 40, LIGHTGRAY);
+        DrawText(TextFormat("FPS: %d Bodies: %d tSpeed: %.0lf", GetFPS(), simulation.count, flags.tSpeed), 30, 30, 40, LIGHTGRAY);
     EndDrawing();
 }
 
