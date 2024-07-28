@@ -60,7 +60,7 @@ void draw(Camera2D camera, Simulation simulation, DisplayFlags flags){
             DrawLine(-GRID_LEN, 0, GRID_LEN, 0, BLUE);
             // Draw bodies
             for(unsigned i = 0; i < simulation.count; i++){
-                SimulationBody body = simulation.bodies[i];
+                Body body = simulation.bodies[i];
                 // Draw trayectories
                 if (body.trayectory.count > 1) {
                     for(unsigned j = 1; j < body.trayectory.count; j++){

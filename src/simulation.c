@@ -1,7 +1,7 @@
 #include "simulation.h"
 #include "physics.h"
 
-void add_simulation_body(Simulation* simulation, SimulationBody body){
+void add_simulation_body(Simulation* simulation, Body body){
     simulation->bodies[simulation->count] = body;
     simulation->count++;
 }
@@ -16,7 +16,7 @@ void remove_simulation_body(Simulation* simulation, unsigned index){
     simulation->count--;
 }
 
-void add_tpoint(SimulationBody* body, Vector2 point){
+void add_tpoint(Body* body, Vector2 point){
     if(body->trayectory.count < MAX_TPOINTS){
         body->trayectory.points[body->trayectory.count] = point;
         body->trayectory.count++; 
@@ -30,7 +30,7 @@ void add_tpoint(SimulationBody* body, Vector2 point){
 }
 void update_trayectories(Simulation* simulation){
     for(unsigned i = 0; i < simulation->count; i++){
-        SimulationBody* body = &simulation->bodies[i];
+        Body* body = &simulation->bodies[i];
         if (body->trayectory.count > 0) {
             Vector2 lastp = body->trayectory.points[body->trayectory.count -1];
             if (sqrt(pow(body->position.x - lastp.x, 2) + pow(body->position.y - lastp.y, 2)) >= TSIZE) { // TODO FIX DISTANCE
@@ -42,8 +42,8 @@ void update_trayectories(Simulation* simulation){
     }
 }
 
-SimulationBody random_body(){
-    SimulationBody new = {0};
+Body random_body(){
+    Body new = {0};
     // int mExp = rand() % 20;
     int mBase = rand() % 1000000 + 1;
     new.mass = (double)mBase * EARTH_MASS;
@@ -64,7 +64,7 @@ SimulationBody random_body(){
 
 void debug_simulation(Simulation simulation){
     for(unsigned i = 0; i < simulation.count; i++){
-        SimulationBody body = simulation.bodies[i];
+        Body body = simulation.bodies[i];
         printf("Body %3d: x=%.3lf\ty=%.3lf\tvx=%.3lf\t\tvy=%.3lf\n", 
         i+1, body.position.x, body.position.y, body.velocity.x, body.velocity.y);
         printf("Circular buffer: count %d\n", body.trayectory.count);

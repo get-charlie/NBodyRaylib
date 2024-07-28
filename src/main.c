@@ -15,7 +15,7 @@
 
 void remove_infinity(Simulation* simulation){ // Provisional function
     for(unsigned i = 0; i < simulation->count; i++){
-        SimulationBody body = simulation->bodies[i];
+        Body body = simulation->bodies[i];
         if(isinf(body.position.x) || isinf(body.position.y) || isinf(body.velocity.x) || isinf(body.velocity.y)){
             printf("Infinity detected!\n");
             remove_simulation_body(simulation, i);
@@ -27,8 +27,8 @@ void init_random(Simulation* simulation, unsigned count){
         add_simulation_body(simulation, random_body());
     }
 }
-SimulationBody new_body(double mass, double radius, double posx, double posy, double velx, double vely, char * name, Color color){
-    SimulationBody new = {0};
+Body new_body(double mass, double radius, double posx, double posy, double velx, double vely, char * name, Color color){
+    Body new = {0};
     new.mass = mass;
     new.radius = radius;
     new.position.x = posx * SIM_AU;
@@ -40,9 +40,9 @@ SimulationBody new_body(double mass, double radius, double posx, double posy, do
     return new;
 }
 void init_sun_earth_moon(Simulation* simulation){
-    SimulationBody sun = new_body(SUN_MASS, 6963.4, 0.0, 0.0, 0.0, 0.0, "Sun", YELLOW);
-    SimulationBody earth = new_body(EARTH_MASS, 63.71 * 2, 0.0, -1.0, 29.78, 0.0, "Earth", BLUE);
-    SimulationBody moon = new_body(7.3e22, 17.37 * 2, 0.0, -1.00256955529, 1.022 + 29.78, 0.0, "Moon", GRAY);
+    Body sun = new_body(SUN_MASS, 6963.4, 0.0, 0.0, 0.0, 0.0, "Sun", YELLOW);
+    Body earth = new_body(EARTH_MASS, 63.71 * 2, 0.0, -1.0, 29.78, 0.0, "Earth", BLUE);
+    Body moon = new_body(7.3e22, 17.37 * 2, 0.0, -1.00256955529, 1.022 + 29.78, 0.0, "Moon", GRAY);
     add_simulation_body(simulation, earth);
     add_simulation_body(simulation, sun);
     add_simulation_body(simulation, moon);
@@ -62,7 +62,7 @@ int main (){
     SetTargetFPS(60);    
     Simulation simulation = {0};
 
-    init_random(&simulation, 200);
+    init_random(&simulation, 300);
     // init_sun_earth_moon(&simulation);
     double tSpeed = 1.0;
     DisplayFlags flags = {0};

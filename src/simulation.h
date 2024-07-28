@@ -25,23 +25,23 @@ typedef struct{
     Color color;
     char name[NAME_LEN];
     Trayectory trayectory;
-}SimulationBody;
+}Body;
 
 
 typedef struct{
-    SimulationBody bodies[MAX_BODIES];
+    Body bodies[MAX_BODIES];
     unsigned count;
 }Simulation;
 
-void add_simulation_body(Simulation* simulation, SimulationBody body);
+void add_simulation_body(Simulation* simulation, Body body);
 void remove_simulation_body(Simulation* simulation, unsigned index);
 
 
-void add_tpoint(SimulationBody* body, Vector2 point);
+void add_tpoint(Body* body, Vector2 point);
 void update_trayectories(Simulation* simulation);
 
 
-SimulationBody random_body();
+Body random_body();
 
 void debug_simulation(Simulation simulation);
 
