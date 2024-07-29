@@ -12,37 +12,10 @@
 #include "simulation.h"
 #include "gui.h"
 
-
-void remove_infinity(Simulation* simulation){ // Provisional function
-    for(unsigned i = 0; i < simulation->count; i++){
-        Body body = simulation->bodies[i];
-        if(isinf(body.position.x) || isinf(body.position.y) || isinf(body.velocity.x) || isinf(body.velocity.y)){
-            printf("Infinity detected!\n");
-            remove_simulation_body(simulation, i);
-        }
-    }
-}
-void init_random(Simulation* simulation, unsigned count){
-    for(int i = 0; i < count; i++){
-        add_simulation_body(simulation, random_body());
-    }
-}
-Body new_body(double mass, double radius, double posx, double posy, double velx, double vely, char * name, Color color){
-    Body new = {0};
-    new.mass = mass;
-    new.radius = radius;
-    new.position.x = posx * SIM_AU;
-    new.position.y = posy * SIM_AU;
-    new.velocity.x = velx * KM_S;
-    new.velocity.y = vely * KM_S;
-    strncpy(new.name, name, NAME_LEN);
-    new.color = color;
-    return new;
-}
 void init_sun_earth_moon(Simulation* simulation){
-    Body sun = new_body(SUN_MASS, 6963.4, 0.0, 0.0, 0.0, 0.0, "Sun", YELLOW);
-    Body earth = new_body(EARTH_MASS, 63.71 * 2, 0.0, -1.0, 29.78, 0.0, "Earth", BLUE);
-    Body moon = new_body(7.3e22, 17.37 * 2, 0.0, -1.00256955529, 1.022 + 29.78, 0.0, "Moon", GRAY);
+    Body sun = new_body("Sun", SUN_MASS, 6963.4, 0.0, 0.0, 0.0, 0.0, YELLOW);
+    Body earth = new_body("Earth", EARTH_MASS, 63.71 * 2, 0.0, -1.0, 29.78, 0.0, BLUE);
+    Body moon = new_body("Moon", 7.3e22, 17.37 * 2, 0.0, -1.00256955529, 1.022 + 29.78, 0.0, GRAY);
     add_simulation_body(simulation, earth);
     add_simulation_body(simulation, sun);
     add_simulation_body(simulation, moon);
@@ -62,8 +35,9 @@ int main (){
     SetTargetFPS(60);    
     Simulation simulation = {0};
 
-    init_random(&simulation, 300);
+    // init_random(&simulation, 250);
     // init_sun_earth_moon(&simulation);
+    init_universe(&simulation, 10, 100, 50);
     double tSpeed = 1.0;
     DisplayFlags flags = {0};
     flags.tSpeed = tSpeed;
@@ -89,13 +63,14 @@ int main (){
             flags.tSpeed = tSpeed;
         }
         // debug_simulation(simulation);
+        constrains(&simulation);
         update_camera_pos(&camera);        
         update_zoom(&camera);
         update_simulation(&simulation, tSpeed);
         update_collisions(&simulation);
-        // remove_infinity(&simulation);
         update_trayectories(&simulation);
         draw(camera, simulation, flags);
+        simulation.time += 1 * tSpeed * GetFrameTime();
     }
 
     CloseWindow();

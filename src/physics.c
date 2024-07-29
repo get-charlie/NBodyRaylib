@@ -3,11 +3,11 @@
 #include <stdio.h>
 #include <string.h>
 
-static double get_distance(Body b1, Body b2){ // TODO make distance "public" and work with vectors instead of bodies
-    return  sqrt(pow(b2.position.x - b1.position.x, 2) + pow(b2.position.y - b1.position.y, 2));
+double get_distance(Vector2 p1, Vector2 p2){
+    return sqrt(pow(p1.x - p2.x, 2) + pow(p1.y - p2.y, 2));
 }
 static Vector2 get_gforce(Body b1, Body b2){
-    double d = get_distance(b1, b2) * SCALE_FACTOR;
+    double d = get_distance(b1.position, b2.position) * SCALE_FACTOR;
     double F = (G_CONST * b1.mass * b2.mass) / pow(d, 2);
     Vector2 vF;
     vF.x = (F * (b2.position.x - b1.position.x)) / d;
@@ -29,7 +29,7 @@ static Color color_average(Color c1, Color c2){
     return color;
 }
 static Body get_more_massive(Body b1, Body b2){
-    return b1.mass > b2.mass ? b1 : b2;
+    return b1.mass >= b2.mass ? b1 : b2;
 }
 static Body get_less_massive(Body b1, Body b2){
     return b1.mass < b2.mass ? b1 : b2;
@@ -38,7 +38,7 @@ static double get_new_radius(double r1, double r2){
     return cbrt(pow(r1, 3) + pow(r2, 3));
 }
 
-static Vector2 collision_velocity(Body b1, Body b2){
+static Vector2 get_collision_velocity(Body b1, Body b2){
     Vector2 vf;
     float m1 = b1.mass, m2 = b2.mass;
     float x1 = b1.position.x, x2 = b2.position.x, y1 = b1.position.y, y2 = b2.position.y;
@@ -54,13 +54,13 @@ static Body merge_bodies(Body b1, Body b2){
     new.radius = get_new_radius(b1.radius, b2.radius);
     new.color = get_more_massive(b1, b2).color;
     new.position = get_more_massive(b1, b2).position;
-    new.velocity = collision_velocity(get_more_massive(b1, b2), get_less_massive(b1, b2));
+    new.velocity = get_collision_velocity(get_more_massive(b1, b2), get_less_massive(b1, b2));
     new.trayectory = get_more_massive(b1, b2).trayectory;
     strncpy(new.name, get_more_massive(b1, b2).name, NAME_LEN);
     return new;
 }
 static bool body_collision(Body b1, Body b2){
-    return get_distance(b1, b2) <= b1.radius + b2.radius;
+    return get_distance(b1.position, b2.position) <= b1.radius + b2.radius;
 }
 void update_collisions(Simulation* simulation){
     for(unsigned i = 0; i < simulation->count; i++){

@@ -9,8 +9,8 @@
 
 #define NAME_LEN        16
 #define MAX_BODIES      1000
-#define MAX_TPOINTS     300
-#define TSIZE           3000
+#define MAX_TPOINTS     100
+#define TSIZE           1000
 
 typedef struct{
     Vector2 points[MAX_TPOINTS];
@@ -31,18 +31,21 @@ typedef struct{
 typedef struct{
     Body bodies[MAX_BODIES];
     unsigned count;
+    double time;
 }Simulation;
+
+Body new_body(char * name, double mass, double radius, double posx, double posy, double velx, double vely, Color color);
+Body random_body();
+void init_random(Simulation* simulation, unsigned count);
+void init_universe(Simulation* simulation, int stars, int planets, int moons);
 
 void add_simulation_body(Simulation* simulation, Body body);
 void remove_simulation_body(Simulation* simulation, unsigned index);
 
-
 void add_tpoint(Body* body, Vector2 point);
 void update_trayectories(Simulation* simulation);
 
-
-Body random_body();
-
+void constrains(Simulation* simulation);
 void debug_simulation(Simulation simulation);
 
 #endif

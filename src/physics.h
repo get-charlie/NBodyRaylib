@@ -9,6 +9,7 @@
 #define SUN_MASS        1.9891e30
 #define JUPITER_MASS    1.899e27
 #define EARTH_MASS      5.9722e24
+#define MOON_MASS       7.3477e22
 #define AU              1.496e11
 #define SIM_AU          1e5
 
@@ -17,6 +18,7 @@
 
 #include "simulation.h"
 
+double get_distance(Vector2 p1, Vector2 p2);
 
 void update_simulation(Simulation* simulation, double tSpeed);
 void update_collisions(Simulation* simulation);

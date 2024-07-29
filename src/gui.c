@@ -1,4 +1,5 @@
 #include "gui.h"
+#include "physics.h"
 
 void update_camera_pos(Camera2D *camera){
     if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)){
@@ -70,12 +71,26 @@ void draw(Camera2D camera, Simulation simulation, DisplayFlags flags){
                 }
                 DrawLineV(body.trayectory.points[body.trayectory.count-1], body.position, body.color);
                 DrawCircle(body.position.x, body.position.y, body.radius, body.color);
-                DrawText(TextFormat("%s", body.name), body.position.x, body.position.y - (1/camera.zoom) * 15, (1/camera.zoom) * 25, WHITE);
+                // Draw name
+                // DrawText(TextFormat("%s", body.name), body.position.x, body.position.y - (1/camera.zoom) * 15, (1/camera.zoom) * 25, WHITE);
+                // Draw name and mass
+                DrawText(TextFormat("%s m=%.3lf EM", body.name, body.mass / EARTH_MASS), body.position.x, body.position.y - (1/camera.zoom) * 15, (1/camera.zoom) * 25, WHITE);
             }
         EndMode2D();
         DrawText(TextFormat("FPS: %d Bodies: %d tSpeed: %.0lf", GetFPS(), simulation.count, flags.tSpeed), 30, 30, 40, LIGHTGRAY);
+        DrawText(TextFormat("t: %03uy %03ud %02uh %02um %02us", 
+        (unsigned)simulation.time/(365*24*60*60), ((unsigned)simulation.time/(24*60*60)%365), ((unsigned)simulation.time/(60*60)%24), ((unsigned)simulation.time/60)%60, (unsigned)simulation.time%60),
+        30, 70, 40, LIGHTGRAY);
     EndDrawing();
 }
+
+
+
+
+
+
+
+
 
 
 
