@@ -17,7 +17,7 @@
 #include "simulation.h"
 
 typedef struct{
-    double  tSpeed;
+    float  tSpeed;
     bool    debug;
     bool    displayNames;
     bool    displayTrayectory;

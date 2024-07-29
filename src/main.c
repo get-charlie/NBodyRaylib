@@ -38,7 +38,7 @@ int main (){
     // init_random(&simulation, 250);
     // init_sun_earth_moon(&simulation);
     init_universe(&simulation, 10, 100, 50);
-    double tSpeed = 1.0;
+    float tSpeed = 1.0;
     DisplayFlags flags = {0};
     flags.tSpeed = tSpeed;
     while (!WindowShouldClose()){

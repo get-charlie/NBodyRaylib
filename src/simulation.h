@@ -20,8 +20,8 @@ typedef struct{
 typedef struct{
     Vector2 position;
     Vector2 velocity;
-    double mass;
-    double radius;
+    float mass;
+    float radius;
     Color color;
     char name[NAME_LEN];
     Trayectory trayectory;
@@ -34,8 +34,7 @@ typedef struct{
     double time;
 }Simulation;
 
-Body new_body(char * name, double mass, double radius, double posx, double posy, double velx, double vely, Color color);
-Body random_body();
+Body new_body(char * name, float mass, float radius, float posx, float posy, float velx, float vely, Color color);
 void init_random(Simulation* simulation, unsigned count);
 void init_universe(Simulation* simulation, int stars, int planets, int moons);
 

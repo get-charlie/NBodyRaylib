@@ -43,7 +43,7 @@ void update_trayectories(Simulation* simulation){
     }
 }
 
-Body new_body(char * name, double mass, double radius, double posx, double posy, double velx, double vely, Color color){
+Body new_body(char * name, float mass, float radius, float posx, float posy, float velx, float vely, Color color){
     Body new = {0};
     strncpy(new.name, name, NAME_LEN);
     new.mass = mass;
@@ -56,7 +56,7 @@ Body new_body(char * name, double mass, double radius, double posx, double posy,
     return new;
 }
 
-Body random_body(char * name, double massMul, int maxMul, int radMul, int maxDist){
+static Body random_body(char * name, float massMul, int maxMul, int radMul, int maxDist){
     Body new = {0};
     strncpy(new.name, name, NAME_LEN);
     
