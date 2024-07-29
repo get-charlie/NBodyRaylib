@@ -74,16 +74,18 @@ void draw(Camera2D camera, Simulation simulation, DisplayFlags flags){
                 }
 
                 DrawCircle(body.position.x, body.position.y, body.radius, body.color);
-                // Draw name
-                // DrawText(TextFormat("%s", body.name), body.position.x, body.position.y - (1/camera.zoom) * 15, (1/camera.zoom) * 25, WHITE);
                 // Draw name and mass
-                DrawText(TextFormat("%s m=%.3lf EM", body.name, body.mass / EARTH_MASS), body.position.x, body.position.y - (1/camera.zoom) * 15, (1/camera.zoom) * 25, WHITE);
+                if(flags.debug){
+                    DrawText(TextFormat("%s m=%.3lf EM", body.name, body.mass / EARTH_MASS), body.position.x, body.position.y - (1/camera.zoom) * 15, (1/camera.zoom) * 20, WHITE);
+                }
             }
         EndMode2D();
-        DrawText(TextFormat("FPS: %d Bodies: %d Col: %s tSpeed: %.0lf", GetFPS(), simulation.count, simulation.collision ? "ON" : "OFF",  flags.tSpeed), 30, 30, 40, LIGHTGRAY);
-        DrawText(TextFormat("t: %03uy %03ud %02uh %02um %02us", 
-        (unsigned)simulation.time/(365*24*60*60), ((unsigned)simulation.time/(24*60*60)%365), ((unsigned)simulation.time/(60*60)%24), ((unsigned)simulation.time/60)%60, (unsigned)simulation.time%60),
-        30, 70, 40, LIGHTGRAY);
+        if(flags.debug){
+            DrawText(TextFormat("FPS: %d Bodies: %d Col: %s tSpeed: %.0lf", GetFPS(), simulation.count, simulation.collision ? "ON" : "OFF",  flags.tSpeed), 30, 30, 40, LIGHTGRAY);
+            DrawText(TextFormat("t: %03uy %03ud %02uh %02um %02us", 
+            (unsigned)simulation.time/(365*24*60*60), ((unsigned)simulation.time/(24*60*60)%365), ((unsigned)simulation.time/(60*60)%24), ((unsigned)simulation.time/60)%60, (unsigned)simulation.time%60),
+            30, 70, 40, LIGHTGRAY);
+        }
     EndDrawing();
 }
 

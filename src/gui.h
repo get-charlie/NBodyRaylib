@@ -19,7 +19,6 @@
 typedef struct{
     float   tSpeed;
     bool    debug;
-    bool    displayNames;
     bool    displayTrayectory;
 }DisplayFlags;
 

@@ -79,6 +79,13 @@ int main (){
                 flags.displayTrayectory = true;
             }
         }
+        if(IsKeyPressed(KEY_D)){
+            if(flags.debug){
+                flags.debug = false;
+            }else{
+                flags.debug = true;
+            }
+        }
 
         constrains(&simulation);
 

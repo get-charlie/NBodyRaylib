@@ -9,7 +9,7 @@
 
 #define NAME_LEN        16
 #define MAX_BODIES      1000
-#define MAX_TPOINTS     100
+#define MAX_TPOINTS     500
 #define TSIZE           1000
 
 typedef struct{
