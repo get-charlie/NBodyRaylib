@@ -34,12 +34,14 @@ int main (){
 
     SetTargetFPS(60);    
     Simulation simulation = {0};
+    simulation.collision = true;
 
     // init_random(&simulation, 250);
     // init_sun_earth_moon(&simulation);
     init_universe(&simulation, 10, 100, 300);
     float tSpeed = 1.0;
     DisplayFlags flags = {0};
+    flags.debug = true;
     flags.tSpeed = tSpeed;
     while (!WindowShouldClose()){
         if(IsKeyPressed(KEY_F11)){
@@ -84,6 +86,13 @@ int main (){
                 flags.debug = false;
             }else{
                 flags.debug = true;
+            }
+        }
+        if(IsKeyPressed(KEY_N)){
+            if(flags.names){
+                flags.names = false;
+            }else{
+                flags.names = true;
             }
         }
 

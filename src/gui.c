@@ -75,7 +75,7 @@ void draw(Camera2D camera, Simulation simulation, DisplayFlags flags){
 
                 DrawCircle(body.position.x, body.position.y, body.radius, body.color);
                 // Draw name and mass
-                if(flags.debug){
+                if(flags.names){
                     DrawText(TextFormat("%s m=%.3lf EM", body.name, body.mass / EARTH_MASS), body.position.x, body.position.y - (1/camera.zoom) * 15, (1/camera.zoom) * 20, WHITE);
                 }
             }
