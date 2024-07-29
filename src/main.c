@@ -69,6 +69,16 @@ int main (){
                 simulation.collision = true;
             }
         }
+        if(IsKeyPressed(KEY_T)){
+            if(flags.displayTrayectory){
+                flags.displayTrayectory = false;
+                for(int i = 0; i < simulation.count; i++){
+                    simulation.bodies[i].trayectory.count = 0;
+                }
+            }else{
+                flags.displayTrayectory = true;
+            }
+        }
 
         constrains(&simulation);
 
@@ -76,9 +86,11 @@ int main (){
             update_collisions(&simulation);
         }
 
-        update_simulation(&simulation, tSpeed);
-        update_trayectories(&simulation);
+        if(flags.displayTrayectory){
+            update_trayectories(&simulation);
+        }
 
+        update_simulation(&simulation, tSpeed);
 
         update_camera_pos(&camera);        
         update_zoom(&camera);

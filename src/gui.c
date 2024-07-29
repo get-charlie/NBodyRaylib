@@ -63,13 +63,16 @@ void draw(Camera2D camera, Simulation simulation, DisplayFlags flags){
             for(unsigned i = 0; i < simulation.count; i++){
                 Body body = simulation.bodies[i];
                 // Draw trayectories
-                if (body.trayectory.count > 1) {
-                    for(unsigned j = 1; j < body.trayectory.count; j++){
-                        DrawLineV(body.trayectory.points[j-1], body.trayectory.points[j], body.color);
+                if(flags.displayTrayectory){
+                    if (body.trayectory.count > 1) {
+                        for(unsigned j = 1; j < body.trayectory.count; j++){
+                            DrawLineV(body.trayectory.points[j-1], body.trayectory.points[j], body.color);
+                        }
+                        DrawLineV(body.trayectory.points[body.trayectory.count-1], body.position, body.color);
                     }
                     DrawLineV(body.trayectory.points[body.trayectory.count-1], body.position, body.color);
                 }
-                DrawLineV(body.trayectory.points[body.trayectory.count-1], body.position, body.color);
+
                 DrawCircle(body.position.x, body.position.y, body.radius, body.color);
                 // Draw name
                 // DrawText(TextFormat("%s", body.name), body.position.x, body.position.y - (1/camera.zoom) * 15, (1/camera.zoom) * 25, WHITE);
