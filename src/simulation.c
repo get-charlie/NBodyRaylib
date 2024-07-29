@@ -77,15 +77,15 @@ void init_universe(Simulation* simulation, int stars, int planets, int moons){
     char name[NAME_LEN];
     for(int i = 0; i < stars; i++){
         sprintf(name, "S-%d", i+1);
-        add_simulation_body(simulation, random_body(name, SUN_MASS, 10, 10, 1e6));
+        add_simulation_body(simulation, random_body(name, SUN_MASS, 10, 10, 1e7));
     }
     for(int i = 0; i < planets; i++){
         sprintf(name, "P-%d", i+1);
-        add_simulation_body(simulation, random_body(name, EARTH_MASS, 100, 10, 1e6));
+        add_simulation_body(simulation, random_body(name, EARTH_MASS, 100, 10, 1e7));
     }
     for(int i = 0; i < moons; i++){
         sprintf(name, "M-%d", i+1);
-        add_simulation_body(simulation, random_body(name, MOON_MASS, 30, 10, 1e6));
+        add_simulation_body(simulation, random_body(name, MOON_MASS, 30, 10, 1e7));
     }
 }
 

@@ -31,6 +31,7 @@ typedef struct{
 typedef struct{
     Body bodies[MAX_BODIES];
     unsigned count;
+    bool collision;
     double time;
 }Simulation;
 

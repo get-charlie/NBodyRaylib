@@ -37,7 +37,7 @@ int main (){
 
     // init_random(&simulation, 250);
     // init_sun_earth_moon(&simulation);
-    init_universe(&simulation, 10, 100, 50);
+    init_universe(&simulation, 10, 100, 300);
     float tSpeed = 1.0;
     DisplayFlags flags = {0};
     flags.tSpeed = tSpeed;
@@ -62,15 +62,27 @@ int main (){
             }
             flags.tSpeed = tSpeed;
         }
-        // debug_simulation(simulation);
+        if(IsKeyPressed(KEY_C)){
+            if(simulation.collision){
+                simulation.collision = false;
+            }else{
+                simulation.collision = true;
+            }
+        }
+
         constrains(&simulation);
+
+        if(simulation.collision == true){
+            update_collisions(&simulation);
+        }
+
+        update_simulation(&simulation, tSpeed);
+        update_trayectories(&simulation);
+
+
         update_camera_pos(&camera);        
         update_zoom(&camera);
-        update_simulation(&simulation, tSpeed);
-        update_collisions(&simulation);
-        update_trayectories(&simulation);
         draw(camera, simulation, flags);
-        simulation.time += 1 * tSpeed * GetFrameTime();
     }
 
     CloseWindow();

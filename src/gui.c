@@ -77,7 +77,7 @@ void draw(Camera2D camera, Simulation simulation, DisplayFlags flags){
                 DrawText(TextFormat("%s m=%.3lf EM", body.name, body.mass / EARTH_MASS), body.position.x, body.position.y - (1/camera.zoom) * 15, (1/camera.zoom) * 25, WHITE);
             }
         EndMode2D();
-        DrawText(TextFormat("FPS: %d Bodies: %d tSpeed: %.0lf", GetFPS(), simulation.count, flags.tSpeed), 30, 30, 40, LIGHTGRAY);
+        DrawText(TextFormat("FPS: %d Bodies: %d Col: %s tSpeed: %.0lf", GetFPS(), simulation.count, simulation.collision ? "ON" : "OFF",  flags.tSpeed), 30, 30, 40, LIGHTGRAY);
         DrawText(TextFormat("t: %03uy %03ud %02uh %02um %02us", 
         (unsigned)simulation.time/(365*24*60*60), ((unsigned)simulation.time/(24*60*60)%365), ((unsigned)simulation.time/(60*60)%24), ((unsigned)simulation.time/60)%60, (unsigned)simulation.time%60),
         30, 70, 40, LIGHTGRAY);
