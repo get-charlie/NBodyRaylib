@@ -11,17 +11,22 @@
 #include "physics.h"
 #include "simulation.h"
 #include "gui.h"
+#include "loader.h"
 
-void init_sun_earth_moon(Simulation* simulation){
-    Body sun = new_body("Sun", SUN_MASS, 6963.4, 0.0, 0.0, 0.0, 0.0, YELLOW);
-    Body earth = new_body("Earth", EARTH_MASS, 63.71 * 2, 0.0, -1.0, 29.78, 0.0, BLUE);
-    Body moon = new_body("Moon", 7.3e22, 17.37 * 2, 0.0, -1.00256955529, 1.022 + 29.78, 0.0, GRAY);
-    add_simulation_body(simulation, earth);
-    add_simulation_body(simulation, sun);
-    add_simulation_body(simulation, moon);
-}
+int main (int argc, char** argv){
 
-int main (){
+    Simulation simulation;
+
+    if(argc == 2){
+        if(load_simulation(&simulation, argv[1]) == 1){
+            printf("Error: Could not load %s\n", argv[1]);
+            return 1;
+        }
+    }else{
+        printf("Use: starsim2d <simulation.json>\n");
+        return 1;
+    }
+
     const int screenWidth = 1200;
     const int screenHeight = 750;
     srand(time(NULL));
@@ -30,19 +35,15 @@ int main (){
 
     Camera2D camera = {0};
     camera.zoom = 0.1f;
-
-
     SetTargetFPS(60);    
-    Simulation simulation = {0};
-    simulation.collision = true;
 
-    // init_random(&simulation, 250);
-    // init_sun_earth_moon(&simulation);
-    init_universe(&simulation, 10, 100, 300);
     float tSpeed = 1.0;
     DisplayFlags flags = {0};
     flags.debug = true;
+    flags.names = true;
+    flags.displayTrayectory = true;
     flags.tSpeed = tSpeed;
+
     while (!WindowShouldClose()){
         if(IsKeyPressed(KEY_F11)){
             ToggleFullscreen();
@@ -116,8 +117,4 @@ int main (){
     CloseWindow();
     return 0;
 }
-
-
-
-
 

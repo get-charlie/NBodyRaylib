@@ -43,7 +43,7 @@ void update_trayectories(Simulation* simulation){
     }
 }
 
-Body new_body(char * name, float mass, float radius, float posx, float posy, float velx, float vely, Color color){
+Body new_body(char * name, Color color, float mass, float radius, float posx, float posy, float velx, float vely){
     Body new = {0};
     strncpy(new.name, name, NAME_LEN);
     new.mass = mass;

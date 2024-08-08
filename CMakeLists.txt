@@ -25,8 +25,13 @@ FetchContent_GetProperties(raylib)
 endif()
 
 include_directories(src)
-file(GLOB_RECURSE SOURCES src/*.c)
+include_directories(src/cjson)
+
+file(GLOB_RECURSE SOURCES src/*.c src/cjson/*.c)
+
 add_executable(${PROJECT_NAME} ${SOURCES})
+
+# set(CMAKE_BUILD_TYPE Debug)
 
 #set(raylib_VERBOSE 1)
 target_link_libraries(${PROJECT_NAME} raylib)

@@ -1,0 +1,31 @@
+{
+  "time": 0.0,
+  "collision": false,
+  "bodies": [
+    {
+      "name": "Earth",
+      "color": {"r": 0, "g": 0, "b": 255},
+      "mass": 5.972e24,
+      "radius": 63.71,
+      "position": {"x": 0.0, "y": -1.0},
+      "velocity": {"x": 29.78, "y": 0.0}
+    },
+    {
+      "name": "Sun",
+      "color": {"r": 255, "g": 255, "b": 0},
+      "mass": 1.989e30,
+      "radius": 6963.4,
+      "position": {"x": 0.0, "y": 0.0},
+      "velocity": {"x": 0.0, "y": 0.0}
+    },
+    {
+      "name": "Moon",
+      "color": {"r": 128, "g": 128, "b": 128},
+      "mass": 7.3e22,
+      "radius": 17.37,
+      "position": {"x": 0.0, "y": -1.00256955529},
+      "velocity": {"x": 30.802, "y": 0.0}
+    }
+  ]
+}
+

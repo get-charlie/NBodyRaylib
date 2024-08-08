@@ -9,7 +9,7 @@
 #include "raymath.h"
 
 #define GRID_LEN    INT_MAX
-#define MIN_ZOOM    0.0000001f
+#define MIN_ZOOM    0.00001f
 #define MAX_ZOOM    100.0f
 #define GRID_LINES  10000
 #define GRID_STEP   1e3

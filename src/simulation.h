@@ -7,9 +7,9 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#define NAME_LEN        16
+#define NAME_LEN        32
 #define MAX_BODIES      1000
-#define MAX_TPOINTS     500
+#define MAX_TPOINTS     100
 #define TSIZE           1000
 
 typedef struct{
@@ -35,7 +35,7 @@ typedef struct{
     double time;
 }Simulation;
 
-Body new_body(char * name, float mass, float radius, float posx, float posy, float velx, float vely, Color color);
+Body new_body(char * name, Color color, float mass, float radius, float posx, float posy, float velx, float vely);
 void init_random(Simulation* simulation, unsigned count);
 void init_universe(Simulation* simulation, int stars, int planets, int moons);
 
