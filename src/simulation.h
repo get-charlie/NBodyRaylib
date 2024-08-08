@@ -33,9 +33,11 @@ typedef struct{
     unsigned count;
     bool collision;
     double time;
+    float scale;
 }Simulation;
 
-Body new_body(char * name, Color color, float mass, float radius, float posx, float posy, float velx, float vely);
+Body new_body(char * name, Color color, float mass, float radius, float posx, float posy, float velx, float vely, float scale);
+
 void init_random(Simulation* simulation, unsigned count);
 void init_universe(Simulation* simulation, int stars, int planets, int moons);
 

@@ -11,16 +11,16 @@
 #define EARTH_MASS      5.9722e24
 #define MOON_MASS       7.3477e22
 #define AU              1.496e11
-#define SIM_AU          1e5
+// #define SIM_AU          1e5
 
-#define SCALE_FACTOR    (AU / SIM_AU)             // AU to game meters (px)
-#define KM_S            (6.6846e-9 * SIM_AU)      
+// #define SCALE_FACTOR    (AU / SIM_AU)             // AU to game meters (px)
+// #define KM_S            (6.6846e-9 * SIM_AU)      
 
 #include "simulation.h"
 
 float get_distance(Vector2 p1, Vector2 p2);
 
-void update_simulation(Simulation* simulation, float tSpeed);
+void update_simulation(Simulation* simulation, float tSpeed, float scale);
 void update_collisions(Simulation* simulation);
 
 

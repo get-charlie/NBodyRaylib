@@ -43,15 +43,15 @@ void update_trayectories(Simulation* simulation){
     }
 }
 
-Body new_body(char * name, Color color, float mass, float radius, float posx, float posy, float velx, float vely){
+Body new_body(char * name, Color color, float mass, float radius, float posx, float posy, float velx, float vely, float scale){
     Body new = {0};
     strncpy(new.name, name, NAME_LEN);
     new.mass = mass;
     new.radius = radius;
-    new.position.x = posx * SIM_AU;
-    new.position.y = posy * SIM_AU;
-    new.velocity.x = velx * KM_S;
-    new.velocity.y = vely * KM_S;
+    new.position.x = posx * scale;
+    new.position.y = posy * scale;
+    new.velocity.x = velx * 6.6846e-9 * scale; // conversion to km/s
+    new.velocity.y = vely * 6.6846e-9 * scale; // conversion to km/s
     new.color = color;
     return new;
 }

@@ -18,7 +18,7 @@ int main (int argc, char** argv){
     Simulation simulation;
 
     if(argc == 2){
-        if(load_simulation(&simulation, argv[1]) == 1){
+        if(load_simulation(&simulation, argv[1]) != 0){
             printf("Error: Could not load %s\n", argv[1]);
             return 1;
         }
@@ -107,7 +107,7 @@ int main (int argc, char** argv){
             update_trayectories(&simulation);
         }
 
-        update_simulation(&simulation, tSpeed);
+        update_simulation(&simulation, tSpeed, simulation.scale);
 
         update_camera_pos(&camera);        
         update_zoom(&camera);

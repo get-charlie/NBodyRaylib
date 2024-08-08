@@ -51,13 +51,36 @@ int load_simulation(Simulation * simulation, const char * path){
         printf("Error: Could not parse json\n");
         return 1;
     }
+    
+    cJSON *scale = cJSON_GetObjectItemCaseSensitive(json, "scale");
+    if(!cJSON_IsNumber(scale)){
+        printf("Error: time must me a number\n");
+        return 1;
+    }
+    simulation->scale = scale->valuedouble;
+
+    cJSON *collision = cJSON_GetObjectItemCaseSensitive(json, "collision");
+    if(!cJSON_IsBool(collision)){
+        printf("Error: collision must me a boolean\n");
+        return 1;
+    }
+    if(cJSON_IsTrue(collision)){
+        simulation->collision = true;
+    }
+
+    cJSON *time = cJSON_GetObjectItemCaseSensitive(json, "time");
+    if(!cJSON_IsNumber(time)){
+        printf("Error: time must me a number\n");
+        return 1;
+    }
+    simulation->time = time->valuedouble;
 
     cJSON * bodiesjson =  cJSON_GetObjectItemCaseSensitive(json, "bodies");
     if (!cJSON_IsArray(bodiesjson)){
         printf("Error: file is formated wrong\n");
         return 1;
     }
-
+    
     cJSON * body = NULL;
     cJSON_ArrayForEach(body, bodiesjson){
 
@@ -111,7 +134,8 @@ int load_simulation(Simulation * simulation, const char * path){
             name->valuestring,  col,
             mass->valuedouble,  radius->valuedouble,
             x->valuedouble,     y->valuedouble,
-            vx->valuedouble,    vy->valuedouble
+            vx->valuedouble,    vy->valuedouble,
+            simulation->scale
         );
         add_simulation_body(simulation, simbody);
     }
