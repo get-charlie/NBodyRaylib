@@ -49,7 +49,7 @@ Body new_body(char * name, Color color, float mass, float radius, float posx, fl
     new.mass = mass;
     new.radius = radius;
     new.position.x = posx * scale;
-    new.position.y = posy * scale;
+    new.position.y = posy * scale * -1;
     new.velocity.x = velx * 6.6846e-9 * scale; // conversion to km/s
     new.velocity.y = vely * 6.6846e-9 * scale; // conversion to km/s
     new.color = color;
