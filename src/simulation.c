@@ -88,39 +88,6 @@ Body new_random_body(char * name, float mass, int minmassmul, int maxmassmul, fl
     return new;
 }
 
-void constrains(Simulation* simulation){
-    for(unsigned i = 0; i < simulation->count; i++){
-        Body body = simulation->bodies[i];
-        if(isinf(body.position.x) || isinf(body.position.y) || isinf(body.velocity.x) || isinf(body.velocity.y)){
-            printf("Warning: SimulationBody %s had a infinity value and was removed\n", simulation->bodies[i].name);
-            printf("t=%lf, m=%lf EM x=%.3lf y=%.3lf vx=%.3lf vy=%.3lf\n", 
-            simulation->time, body.mass / EARTH_MASS, body.position.x, body.position.y, body.velocity.x, body.velocity.y);
-            remove_simulation_body(simulation, i);
-            continue;
-        }
-        if(isnan(body.position.x) || isnan(body.position.y) || isnan(body.velocity.x) || isnan(body.velocity.y)){
-            printf("Warning: SimulationBody %s had a NAN value and was removed\n", simulation->bodies[i].name);
-            printf("t=%lf m=%.3lf EM x=%.3lf y=%.3lf vx=%.3lf vy=%.3lf\n", 
-            simulation->time, body.mass / EARTH_MASS, body.position.x, body.position.y, body.velocity.x, body.velocity.y);
-            remove_simulation_body(simulation, i);
-        }
-    }
-}
-void debug_simulation(Simulation simulation){
-    for(unsigned i = 0; i < simulation.count; i++){
-        Body body = simulation.bodies[i];
-        printf("Body %3d: x=%.3lf\ty=%.3lf\tvx=%.3lf\t\tvy=%.3lf\n", 
-        i+1, body.position.x, body.position.y, body.velocity.x, body.velocity.y);
-        for(unsigned j = 0; j < body.trayectory.count; j++){
-            printf("Point %d x = %f, y = %f\n", j, body.trayectory.points[j].x, body.trayectory.points[j].y);
-        }
-    }
-}
-
-
-
-
-
 
 
 
