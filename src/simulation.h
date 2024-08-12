@@ -38,6 +38,8 @@ typedef struct{
 
 Body new_body(char * name, Color color, float mass, float radius, float posx, float posy, float velx, float vely, float scale);
 
+Body new_random_body(char * name, float mass, int minmassmul, int maxmassmul, float radmul, float maxdist, float scale);
+
 void init_random(Simulation* simulation, unsigned count);
 void init_universe(Simulation* simulation, int stars, int planets, int moons);
 

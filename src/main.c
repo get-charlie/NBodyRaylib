@@ -17,19 +17,20 @@ int main (int argc, char** argv){
 
     Simulation simulation;
 
-    if(argc == 2){
-        if(load_simulation(&simulation, argv[1]) != 0){
-            printf("Error: Could not load %s\n", argv[1]);
-            return 1;
-        }
-    }else{
+    srand(time(NULL));
+
+    if(argc != 2){
         printf("Use: starsim2d <simulation.json>\n");
         return 1;
+    }
+    if(strstr(argv[1], "random")){
+        load_random(&simulation, argv[1]);
+    }else{
+        load_simulation(&simulation, argv[1]);
     }
 
     const int screenWidth = 1200;
     const int screenHeight = 750;
-    srand(time(NULL));
     InitWindow(screenWidth, screenHeight, "StarSim2D");
 
 

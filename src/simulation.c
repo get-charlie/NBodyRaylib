@@ -55,46 +55,37 @@ Body new_body(char * name, Color color, float mass, float radius, float posx, fl
     new.color = color;
     return new;
 }
-
-static Body random_body(char * name, float massMul, int maxMul, int radMul, int maxDist){
+static Color random_color(){
+   Color color;
+   color.r = rand() % 256;
+   color.g = rand() % 256;
+   color.b = rand() % 256;
+   color.a = 255;
+   return color;
+}
+static float random_mass(float massmul, int min, int max){
+    int rm = rand()%(max-min+1) + min;
+    return massmul * (float)rm;
+}
+static float rad_from_mass(float mass, float radmul){
+    return radmul * log10(mass);
+}
+static Vector2 random_pos(float maxdist, float scale) {
+    Vector2 pos;
+    float rx = (float)rand() / RAND_MAX;
+    float ry = (float)rand() / RAND_MAX;
+    pos.x = (rx * 2 - 1) * scale * maxdist;
+    pos.y = (ry * 2 - 1) * scale * maxdist;
+    return pos;
+}
+Body new_random_body(char * name, float mass, int minmassmul, int maxmassmul, float radmul, float maxdist, float scale){
     Body new = {0};
     strncpy(new.name, name, NAME_LEN);
-    
-    int mBase = (rand()%maxMul)+1;
-    new.mass = mBase * massMul;
-
-    new.radius = radMul * (log2(new.mass) + 1);
-    new.color.r = rand() % 256;
-    new.color.g = rand() % 256;
-    new.color.b = rand() % 256;
-    new.color.a = 255;
-    new.position.x = (float) (rand()%maxDist - maxDist/2);
-    new.position.y = (float) (rand()%maxDist - maxDist/2);
+    new.color = random_color();
+    new.mass = random_mass(mass, minmassmul, maxmassmul);
+    new.radius = rad_from_mass(new.mass, radmul);
+    new.position = random_pos(maxdist, scale);
     return new;
-}
-
-void init_universe(Simulation* simulation, int stars, int planets, int moons){
-    char name[NAME_LEN];
-    for(int i = 0; i < stars; i++){
-        sprintf(name, "S-%d", i+1);
-        add_simulation_body(simulation, random_body(name, SUN_MASS, 10, 10, 1e7));
-    }
-    for(int i = 0; i < planets; i++){
-        sprintf(name, "P-%d", i+1);
-        add_simulation_body(simulation, random_body(name, EARTH_MASS, 100, 10, 1e7));
-    }
-    for(int i = 0; i < moons; i++){
-        sprintf(name, "M-%d", i+1);
-        add_simulation_body(simulation, random_body(name, MOON_MASS, 30, 10, 1e7));
-    }
-}
-
-void init_random(Simulation* simulation, unsigned count){
-    for(int i = 0; i < count; i++){
-        char name[NAME_LEN];
-        sprintf(name, "R-%d", i+1);
-        add_simulation_body(simulation, random_body(name, EARTH_MASS, 1000, 100, 1e6));
-    }
 }
 
 void constrains(Simulation* simulation){
