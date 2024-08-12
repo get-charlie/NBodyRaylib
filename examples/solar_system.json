@@ -1,0 +1,160 @@
+{
+  "scale": 400000,
+  "collision": false,
+  "time": 0.0,
+  "bodies": [
+    {
+      "name": "Sun",
+      "color": {"r": 255, "g": 255, "b": 0},
+      "mass": 1.989e30,
+      "radius": 6963.4,
+      "position": {"x": 0.0, "y": 0.0},
+      "velocity": {"x": 0.0, "y": 0.0}
+    },
+    {
+      "name": "Mercury",
+      "color": {"r": 150, "g": 150, "b": 150},
+      "mass": 3.285e23,
+      "radius": 24.39,
+      "position": {"x": 0.0, "y": 0.4},
+      "velocity": {"x": 47.9, "y": 0.0}
+    },
+    {
+      "name": "Venus",
+      "color": {"r": 255, "g": 200, "b": 130},
+      "mass": 4.867e24,
+      "radius": 60.51,
+      "position": {"x": 0.0, "y": 0.72},
+      "velocity": {"x": 35.02, "y": 0.0}
+    },
+    {
+      "name": "Earth",
+      "color": {"r": 0, "g": 200, "b": 200},
+      "mass": 5.972e24,
+      "radius": 63.71,
+      "position": {"x": 0.0, "y": 1.0},
+      "velocity": {"x": 29.78, "y": 0.0}
+    },
+    {
+      "name": "Moon",
+      "color": {"r": 128, "g": 128, "b": 128},
+      "mass": 7.3e22,
+      "radius": 17.37,
+      "position": {"x": 0.0, "y": 1.00256955529},
+      "velocity": {"x": 30.802, "y": 0.0}
+    },
+    {
+      "name": "Mars",
+      "color": {"r": 255, "g": 0, "b": 0},
+      "mass": 6.39e23,
+      "radius": 33.89,
+      "position": {"x": 0.0, "y": 1.5},
+      "velocity": {"x": 24.08, "y": 0.0}
+    },
+    {
+      "name": "Phobos",
+      "color": {"r": 255, "g": 0, "b": 0},
+      "mass": 1.06e16,
+      "radius": 1.12,
+      "position": {"x": 0.0, "y": 1.500042708},
+      "velocity": {"x": 26.218, "y": 0.0}
+    },
+    {
+      "name": "Ceres",
+      "color": {"r": 100, "g": 100, "b": 100},
+      "mass": 9.1e20,
+      "radius": 4.73,
+      "position": {"x": 0.0, "y": 2.8},
+      "velocity": {"x": 17.9, "y": 0.0}
+    },
+    {
+      "name": "Jupiter",
+      "color": {"r": 255, "g": 130, "b": 0},
+      "mass": 1.898e27,
+      "radius": 699.11,
+      "position": {"x": 0.0, "y": 5.2},
+      "velocity": {"x": 13.07, "y": 0.0}
+    },
+    {
+      "name": "Callisto",
+      "color": {"r": 100, "g": 100, "b": 100},
+      "mass": 1.0759e23,
+      "radius": 24.1,
+      "position": {"x": 0.0, "y": 5.212587078},
+      "velocity": {"x": 21.274, "y": 0.0}
+    },
+    {
+      "name": "Ganymede",
+      "color": {"r": 0, "g": 100, "b": 0},
+      "mass": 1.4819e23,
+      "radius": 26.34,
+      "position": {"x": 0.0, "y": 5.207155182056},
+      "velocity": {"x": 23.15, "y": 0.0}
+    },
+    {
+      "name": "Europa",
+      "color": {"r": 50, "g": 200, "b": 235},
+      "mass": 4.799e22,
+      "radius": 15.6,
+      "position": {"x": 0.0, "y": 5.20448535796},
+      "velocity": {"x": 26.81, "y": 0.0}
+    },
+    {
+      "name": "Io",
+      "color": {"r": 255, "g": 255, "b": 0},
+      "mass": 8.931e22,
+      "radius": 18.21,
+      "position": {"x": 0.0, "y": 5.20281889039},
+      "velocity": {"x": 30.404, "y": 0.0}
+    },
+    {
+      "name": "Saturn",
+      "color": {"r": 255, "g": 0, "b": 255},
+      "mass": 5.683e26,
+      "radius": 602.68,
+      "position": {"x": 0.0, "y": 9.5},
+      "velocity": {"x": 9.68, "y": 0.0}
+    },
+    {
+      "name": "Titan",
+      "color": {"r": 0, "g": 255, "b": 190},
+      "mass": 1.3452e23,
+      "radius": 25.74,
+      "position": {"x": 0.0, "y": 9.508021504547},
+      "velocity": {"x": 15.25, "y": 0.0}
+    },
+    {
+      "name": "Uranus",
+      "color": {"r": 0, "g": 150, "b": 255},
+      "mass": 8.681e25,
+      "radius": 253.62,
+      "position": {"x": 0.0, "y": 19},
+      "velocity": {"x": 6.8, "y": 0.0}
+    },
+    {
+      "name": "Neptune",
+      "color": {"r": 0, "g": 0, "b": 255},
+      "mass": 1.024e26,
+      "radius": 246.22,
+      "position": {"x": 0.0, "y": 30},
+      "velocity": {"x": 5.43, "y": 0.0}
+    },
+    {
+      "name": "Triton",
+      "color": {"r": 255, "g": 255, "b": 255},
+      "mass": 2.1389e22,
+      "radius": 13.53,
+      "position": {"x": 0.0, "y": 30.00237151744},
+      "velocity": {"x": 1.04, "y": 0.0}
+    },
+    {
+      "name": "Pluto",
+      "color": {"r": 130, "g": 230, "b": 240},
+      "mass": 1.3e22,
+      "radius": 11.88,
+      "position": {"x": 0.0, "y": 39},
+      "velocity": {"x": 4.66, "y": 0.0}
+    }
+  ]
+}
+

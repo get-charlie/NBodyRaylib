@@ -9,8 +9,8 @@
 
 #define NAME_LEN        32
 #define MAX_BODIES      1000
-#define MAX_TPOINTS     100
-#define TSIZE           1000
+#define MAX_TPOINTS     500
+#define TSIZE           50
 
 typedef struct{
     Vector2 points[MAX_TPOINTS];

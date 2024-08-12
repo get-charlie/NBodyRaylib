@@ -1,0 +1,80 @@
+{
+  "scale": 25000,
+  "collision": false,
+  "time": 0.0,
+  "bodies": [
+    {
+      "name": "Sun",
+      "color": {"r": 255, "g": 255, "b": 0},
+      "mass": 1.989e30,
+      "radius": 6963.4,
+      "position": {"x": 0.0, "y": 0.0},
+      "velocity": {"x": 0.0, "y": 0.0}
+    },
+    {
+      "name": "Mercury",
+      "color": {"r": 150, "g": 150, "b": 150},
+      "mass": 3.285e23,
+      "radius": 24.39,
+      "position": {"x": 0.0, "y": 0.4},
+      "velocity": {"x": 47.9, "y": 0.0}
+    },
+    {
+      "name": "Venus",
+      "color": {"r": 255, "g": 200, "b": 130},
+      "mass": 4.867e24,
+      "radius": 60.51,
+      "position": {"x": 0.0, "y": 0.72},
+      "velocity": {"x": 35.02, "y": 0.0}
+    },
+    {
+      "name": "Earth",
+      "color": {"r": 0, "g": 200, "b": 200},
+      "mass": 5.972e24,
+      "radius": 63.71,
+      "position": {"x": 0.0, "y": 1.0},
+      "velocity": {"x": 29.78, "y": 0.0}
+    },
+    {
+      "name": "Mars",
+      "color": {"r": 255, "g": 0, "b": 0},
+      "mass": 6.39e23,
+      "radius": 33.89,
+      "position": {"x": 0.0, "y": 1.5},
+      "velocity": {"x": 24.08, "y": 0.0}
+    },
+    {
+      "name": "Jupiter",
+      "color": {"r": 255, "g": 130, "b": 0},
+      "mass": 1.898e27,
+      "radius": 699.11,
+      "position": {"x": 0.0, "y": 5.2},
+      "velocity": {"x": 13.07, "y": 0.0}
+    },
+    {
+      "name": "Saturn",
+      "color": {"r": 255, "g": 0, "b": 255},
+      "mass": 5.683e26,
+      "radius": 602.68,
+      "position": {"x": 0.0, "y": 9.5},
+      "velocity": {"x": 9.68, "y": 0.0}
+    },
+    {
+      "name": "Uranus",
+      "color": {"r": 0, "g": 150, "b": 255},
+      "mass": 8.681e25,
+      "radius": 253.62,
+      "position": {"x": 0.0, "y": 19},
+      "velocity": {"x": 6.8, "y": 0.0}
+    },
+    {
+      "name": "Neptune",
+      "color": {"r": 0, "g": 0, "b": 255},
+      "mass": 1.024e26,
+      "radius": 246.22,
+      "position": {"x": 0.0, "y": 30},
+      "velocity": {"x": 5.43, "y": 0.0}
+    }
+  ]
+}
+

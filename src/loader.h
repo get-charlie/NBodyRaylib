@@ -1,5 +1,5 @@
-#ifndef _loader_h
-#define _loader_h
+#ifndef _LOADER_H
+#define _LOADER_H
 
 #include <stdio.h>
 #include <stdlib.h>
