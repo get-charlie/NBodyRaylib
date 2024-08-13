@@ -98,8 +98,6 @@ int main (int argc, char** argv){
             }
         }
 
-        constrains(&simulation);
-
         if(simulation.collision == true){
             update_collisions(&simulation);
         }

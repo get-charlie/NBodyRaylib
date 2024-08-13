@@ -29,6 +29,7 @@ void add_tpoint(Body* body, Vector2 point){
     }
 
 }
+
 void update_trayectories(Simulation* simulation){
     for(unsigned i = 0; i < simulation->count; i++){
         Body* body = &simulation->bodies[i];
@@ -55,6 +56,7 @@ Body new_body(char * name, Color color, float mass, float radius, float posx, fl
     new.color = color;
     return new;
 }
+
 static Color random_color(){
    Color color;
    color.r = rand() % 256;
@@ -63,14 +65,17 @@ static Color random_color(){
    color.a = 255;
    return color;
 }
+
 static float random_mass(float massmul, int min, int max){
     int rm = rand()%(max-min+1) + min;
     return massmul * (float)rm;
 }
+
 static float rad_from_mass(float mass, float radmul){
-    return radmul * log10(mass);
+    return radmul * cbrt(mass/EARTH_MASS);
 }
-static Vector2 random_pos(float maxdist, float scale) {
+
+static Vector2 random_pos(float maxdist, float scale){
     Vector2 pos;
     float rx = (float)rand() / RAND_MAX;
     float ry = (float)rand() / RAND_MAX;
@@ -78,6 +83,7 @@ static Vector2 random_pos(float maxdist, float scale) {
     pos.y = (ry * 2 - 1) * scale * maxdist;
     return pos;
 }
+
 Body new_random_body(char * name, float mass, int minmassmul, int maxmassmul, float radmul, float maxdist, float scale){
     Body new = {0};
     strncpy(new.name, name, NAME_LEN);
