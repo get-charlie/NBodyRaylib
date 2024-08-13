@@ -1,7 +1,6 @@
 {
   "scale": 25000000,
   "collision": true,
-  "time": 0.0,
   "bodies": [
     {
       "name": "B1",

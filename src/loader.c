@@ -68,13 +68,6 @@ int load_simulation(Simulation * simulation, const char * path){
         simulation->collision = true;
     }
 
-    cJSON *time = cJSON_GetObjectItemCaseSensitive(json, "time");
-    if(!cJSON_IsNumber(time)){
-        printf("Error: time must me a number\n");
-        return 1;
-    }
-    simulation->time = time->valuedouble;
-
     cJSON * bodiesjson =  cJSON_GetObjectItemCaseSensitive(json, "bodies");
     if (!cJSON_IsArray(bodiesjson)){
         printf("Error: file is formated wrong\n");
@@ -174,13 +167,6 @@ int load_random(Simulation * simulation, const char * path){
     if(cJSON_IsTrue(collision)){
         simulation->collision = true;
     }
-
-    cJSON *time = cJSON_GetObjectItemCaseSensitive(json, "time");
-    if(!cJSON_IsNumber(time)){
-        printf("Error: time must me a number\n");
-        return 1;
-    }
-    simulation->time = time->valuedouble;
         
     cJSON *count = cJSON_GetObjectItemCaseSensitive(json, "count");
     if(!cJSON_IsNumber(scale)){

@@ -29,7 +29,7 @@ static float roundNearest10(float num) {
     return pow(10, exponent);
 }
 
-void draw(Camera2D camera, Simulation simulation, DisplayFlags flags){
+void draw(Camera2D camera, Simulation simulation, DisplayFlags flags, double simtime){
     BeginDrawing();
         ClearBackground(BLACK);
         BeginMode2D(camera);
@@ -83,7 +83,7 @@ void draw(Camera2D camera, Simulation simulation, DisplayFlags flags){
         if(flags.debug){
             DrawText(TextFormat("FPS: %d Bodies: %d Col: %s tSpeed: %.0lf", GetFPS(), simulation.count, simulation.collision ? "ON" : "OFF",  flags.tSpeed), 30, 30, 40, LIGHTGRAY);
             DrawText(TextFormat("t: %03uy %03ud %02uh %02um %02us", 
-            (unsigned)simulation.time/(365*24*60*60), ((unsigned)simulation.time/(24*60*60)%365), ((unsigned)simulation.time/(60*60)%24), ((unsigned)simulation.time/60)%60, (unsigned)simulation.time%60),
+            (unsigned)simtime/(365*24*60*60), ((unsigned)simtime/(24*60*60)%365), ((unsigned)simtime/(60*60)%24), ((unsigned)simtime/60)%60, (unsigned)simtime%60),
             30, 70, 40, LIGHTGRAY);
         }
     EndDrawing();

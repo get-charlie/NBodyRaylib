@@ -86,7 +86,6 @@ void update_simulation(Simulation* simulation, float tSpeed, float scale){
         body.position.y += body.velocity.y * GetFrameTime() * tSpeed;
         simulation->bodies[i] = body;
     }
-    simulation->time += tSpeed * GetFrameTime();
 }
 
 

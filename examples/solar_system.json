@@ -1,7 +1,6 @@
 {
   "scale": 400000,
   "collision": false,
-  "time": 0.0,
   "bodies": [
     {
       "name": "Sun",
@@ -50,14 +49,6 @@
       "radius": 33.89,
       "position": {"x": 0.0, "y": 1.5},
       "velocity": {"x": 24.08, "y": 0.0}
-    },
-    {
-      "name": "Phobos",
-      "color": {"r": 255, "g": 0, "b": 0},
-      "mass": 1.06e16,
-      "radius": 1.12,
-      "position": {"x": 0.0, "y": 1.500042708},
-      "velocity": {"x": 26.218, "y": 0.0}
     },
     {
       "name": "Ceres",

@@ -44,6 +44,8 @@ int main (int argc, char** argv){
     flags.names = true;
     flags.displayTrayectory = true;
     flags.tSpeed = tSpeed;
+    
+    double simtime = 0.0;
 
     while (!WindowShouldClose()){
         if(IsKeyPressed(KEY_F11)){
@@ -110,7 +112,8 @@ int main (int argc, char** argv){
 
         update_camera_pos(&camera);        
         update_zoom(&camera);
-        draw(camera, simulation, flags);
+        simtime += tSpeed * GetFrameTime();
+        draw(camera, simulation, flags, simtime);
     }
 
     CloseWindow();

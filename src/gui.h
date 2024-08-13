@@ -25,6 +25,6 @@ typedef struct{
 
 void update_camera_pos(Camera2D *camera);
 void update_zoom(Camera2D *camera);
-void draw(Camera2D camera, Simulation simulation, DisplayFlags flags);
+void draw(Camera2D camera, Simulation simulation, DisplayFlags flags, double simtime);
 
 #endif
