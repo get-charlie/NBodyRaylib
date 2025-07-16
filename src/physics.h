@@ -19,9 +19,7 @@
 #include "simulation.h"
 
 float get_distance(Vector2 p1, Vector2 p2);
-
 void update_simulation(Simulation* simulation, float tSpeed, float scale);
-void update_collisions(Simulation* simulation);
 
 
 #endif

@@ -1,6 +1,5 @@
 {
   "scale": 50000,
-  "collision": false,
   "bodies": [
     {
       "name": "Sun",

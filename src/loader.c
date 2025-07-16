@@ -50,7 +50,7 @@ int load_simulation(Simulation * simulation, const char * path)
     }
 
     cJSON* json = parse_json(jsondata);
-    if (!json){
+    if(!json){
         printf("Error: Could not parse json\n");
         return 1;
     }
@@ -62,17 +62,8 @@ int load_simulation(Simulation * simulation, const char * path)
     }
     simulation->scale = scale->valuedouble;
 
-    cJSON* collision = cJSON_GetObjectItemCaseSensitive(json, "collision");
-    if(!cJSON_IsBool(collision)){
-        printf("Error: collision must me a boolean\n");
-        return 1;
-    }
-    if(cJSON_IsTrue(collision)){
-        simulation->collision = true;
-    }
-
     cJSON* bodiesjson =  cJSON_GetObjectItemCaseSensitive(json, "bodies");
-    if (!cJSON_IsArray(bodiesjson)){
+    if(!cJSON_IsArray(bodiesjson)){
         printf("Error: file is formated wrong\n");
         return 1;
     }
@@ -80,7 +71,7 @@ int load_simulation(Simulation * simulation, const char * path)
     cJSON* body = NULL;
     cJSON_ArrayForEach(body, bodiesjson){
 
-        if (!cJSON_IsObject(body)){
+        if(!cJSON_IsObject(body)){
             printf("Error: invalid data in body object\n");
             return 1;
         }

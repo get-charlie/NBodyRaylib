@@ -66,14 +66,6 @@ int main (int argc, char** argv)
             }
             flags.tSpeed = tSpeed;
         }
-        if(IsKeyPressed(KEY_C)){
-            if(simulation->collision){
-                simulation->collision = false;
-            }
-            else{
-                simulation->collision = true;
-            }
-        }
 
         if(IsKeyPressed(KEY_T)){
             if(flags.displayTrayectory){
@@ -103,10 +95,6 @@ int main (int argc, char** argv)
             else{
                 flags.names = true;
             }
-        }
-
-        if(simulation->collision == true){
-            update_collisions(simulation);
         }
 
         if(flags.displayTrayectory){

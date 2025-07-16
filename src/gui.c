@@ -95,10 +95,9 @@ void draw(Camera2D camera, Simulation simulation, DisplayFlags flags, double sim
         EndMode2D();
         if(flags.debug){
             DrawText(TextFormat(
-                "FPS: %d Bodies: %d Col: %s tSpeed: %.0lf x: %f AU y: %f AU z: %f", 
+                "FPS: %d Bodies: %d tSpeed: %.0lf x: %f AU y: %f AU z: %f", 
                 GetFPS(), 
                 simulation.count, 
-                simulation.collision ? "ON" : "OFF", 
                 flags.tSpeed, 
                 camera.target.x / simulation.scale, 
                 camera.target.y / simulation.scale, 
