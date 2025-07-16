@@ -49,7 +49,7 @@ Create a custom simulation by writing a JSON file.
 ```
 Run your custom simulation with:
 ```bash
-./BodySim path/to/your_config.json
+./BodySim path/to/your_sim.json
 ```
 ## Simulation Controls
 The following keyboard controls are available during simulation:
