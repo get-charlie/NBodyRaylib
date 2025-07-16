@@ -32,8 +32,7 @@ static float roundNearest10(float num)
     return pow(10, exponent);
 }
 
-#define MARKER_SCALE 20
-static void draw_grid(Camera2D camera, Simulation simulation)
+static void draw_grid(Camera2D camera)
 {
     float step = 0.0;
     for(int i = 1; i <= GRID_LINES; i++){
@@ -42,23 +41,6 @@ static void draw_grid(Camera2D camera, Simulation simulation)
         DrawLine(-step, -GRID_LEN, -step, GRID_LEN, GRAY);
         DrawLine(-GRID_LEN, -step, GRID_LEN, -step, GRAY);
         step += GRID_STEP * roundNearest10(1.0/camera.zoom);
-    }
-    step = 0.0;
-    for(int i = 1; i <= 100; i++){
-        float zm = roundNearest10(1.0/(camera.zoom*50));
-        step += simulation.scale * zm;
-        DrawText(TextFormat(
-            "%.0f AU", i * zm
-        ), step, 0, (1/camera.zoom) * MARKER_SCALE, WHITE);
-        DrawText(TextFormat(
-            "%.0f AU", i * zm
-        ), 0, step, (1/camera.zoom) * MARKER_SCALE, WHITE);
-        DrawText(TextFormat(
-            "%.0f AU", i * zm
-        ), -step, 0, (1/camera.zoom) * MARKER_SCALE, WHITE);
-        DrawText(TextFormat(
-            "%.0f AU", i * zm
-        ), 0, -step, (1/camera.zoom) * MARKER_SCALE, WHITE);
     }
     // Draw asix lines
     DrawLine(0, -GRID_LEN, 0, GRID_LEN, RED);
@@ -127,7 +109,7 @@ void draw(Camera2D camera, Simulation simulation, DisplayFlags flags, double sim
     BeginDrawing();
         ClearBackground(BLACK);
         BeginMode2D(camera);
-            draw_grid(camera, simulation);
+            draw_grid(camera);
             draw_bodies(camera, simulation, flags);
         EndMode2D();
         draw_debug(camera, simulation, flags, simtime);
