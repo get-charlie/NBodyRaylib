@@ -40,38 +40,6 @@
       "radius": 50,
       "position": {"x": 0.0, "y": 1.5},
       "velocity": {"x": 24.08, "y": 0.0}
-    },
-    {
-      "name": "Jupiter",
-      "color": {"r": 255, "g": 130, "b": 0},
-      "mass": 1.898e27,
-      "radius": 50,
-      "position": {"x": 0.0, "y": 5.2},
-      "velocity": {"x": 13.07, "y": 0.0}
-    },
-    {
-      "name": "Saturn",
-      "color": {"r": 255, "g": 0, "b": 255},
-      "mass": 5.683e26,
-      "radius": 50,
-      "position": {"x": 0.0, "y": 9.5},
-      "velocity": {"x": 9.68, "y": 0.0}
-    },
-    {
-      "name": "Uranus",
-      "color": {"r": 0, "g": 150, "b": 255},
-      "mass": 8.681e25,
-      "radius": 50,
-      "position": {"x": 0.0, "y": 19},
-      "velocity": {"x": 6.8, "y": 0.0}
-    },
-    {
-      "name": "Neptune",
-      "color": {"r": 0, "g": 0, "b": 255},
-      "mass": 1.024e26,
-      "radius": 50,
-      "position": {"x": 0.0, "y": 30},
-      "velocity": {"x": 5.43, "y": 0.0}
     }
   ]
 }
