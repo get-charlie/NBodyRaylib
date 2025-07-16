@@ -9,7 +9,5 @@
 #include "simulation.h"
 
 int load_simulation(Simulation * simulation, const char * file);
-int load_random(Simulation * simulation, const char * path);
-
 
 #endif

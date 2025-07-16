@@ -26,12 +26,8 @@ int main (int argc, char** argv)
         printf("Use: %s <simulation.json>\n", argv[0]);
         return 1;
     }
-    if(strstr(argv[1], "random")){
-        load_random(simulation, argv[1]);
-    }
-    else{
-        load_simulation(simulation, argv[1]);
-    }
+
+    load_simulation(simulation, argv[1]);
 
     InitWindow(screenWidth, screenHeight, "StarSim2D");
 

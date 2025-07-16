@@ -12,12 +12,12 @@
 #define MAX_TPOINTS     500
 #define TSIZE           50
 
-typedef struct{
+typedef struct {
     Vector2 points[MAX_TPOINTS];
     unsigned count;
-}Trayectory;
+} Trayectory;
 
-typedef struct{
+typedef struct {
     Vector2 position;
     Vector2 velocity;
     float mass;
@@ -25,21 +25,17 @@ typedef struct{
     Color color;
     char name[NAME_LEN];
     Trayectory trayectory;
-}Body;
+} Body;
 
-
-typedef struct{
+typedef struct {
     Body bodies[MAX_BODIES];
     unsigned count;
     bool collision;
     float scale;
-}Simulation;
+} Simulation;
 
-Body new_body(char * name, Color color, float mass, float radius, float posx, float posy, float velx, float vely, float scale);
+Body new_body(char* name, Color color, float mass, float radius, float posx, float posy, float velx, float vely, float scale);
 
-Body new_random_body(char * name, float mass, int minmassmul, int maxmassmul, float radmul, float maxdist, float scale);
-
-void init_random(Simulation* simulation, unsigned count);
 void init_universe(Simulation* simulation, int stars, int planets, int moons);
 
 void add_simulation_body(Simulation* simulation, Body body);
