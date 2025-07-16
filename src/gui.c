@@ -76,18 +76,15 @@ static void draw_bodies(Camera2D camera, Simulation simulation, DisplayFlags fla
     }
 }
 
-static void draw_debug(Camera2D camera, Simulation simulation, DisplayFlags flags, double simtime)
+static void draw_debug(Simulation simulation, DisplayFlags flags, double simtime)
 {
     if(flags.debug){
         // Display debug info
         DrawText(TextFormat(
-            "FPS: %d Bodies: %d tSpeed: %.0lf x: %f AU y: %f AU z: %f", 
+            "FPS: %d Bodies: %d tSpeed: %.0lf", 
             GetFPS(), 
             simulation.count, 
-            flags.tSpeed, 
-            camera.target.x / simulation.scale, 
-            camera.target.y / simulation.scale, 
-            camera.zoom
+            flags.tSpeed 
         ), TEXT_X, TEXT_Y, TEXT_SIZE, LIGHTGRAY);
         // Display time
         DrawText(TextFormat(
@@ -109,7 +106,7 @@ void draw(Camera2D camera, Simulation simulation, DisplayFlags flags, double sim
             draw_grid(camera);
             draw_bodies(camera, simulation, flags);
         EndMode2D();
-        draw_debug(camera, simulation, flags, simtime);
+        draw_debug(simulation, flags, simtime);
     EndDrawing();
 }
 
