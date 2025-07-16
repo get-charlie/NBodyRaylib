@@ -18,7 +18,7 @@ const int screenHeight = 750;
 // TODO unpasta this spagetti
 int main (int argc, char** argv)
 {
-    Simulation simulation;
+    Simulation* simulation = malloc(sizeof(Simulation));
 
     srand(time(NULL));
 
@@ -27,10 +27,10 @@ int main (int argc, char** argv)
         return 1;
     }
     if(strstr(argv[1], "random")){
-        load_random(&simulation, argv[1]);
+        load_random(simulation, argv[1]);
     }
     else{
-        load_simulation(&simulation, argv[1]);
+        load_simulation(simulation, argv[1]);
     }
 
     InitWindow(screenWidth, screenHeight, "StarSim2D");
@@ -71,19 +71,19 @@ int main (int argc, char** argv)
             flags.tSpeed = tSpeed;
         }
         if(IsKeyPressed(KEY_C)){
-            if(simulation.collision){
-                simulation.collision = false;
+            if(simulation->collision){
+                simulation->collision = false;
             }
             else{
-                simulation.collision = true;
+                simulation->collision = true;
             }
         }
 
         if(IsKeyPressed(KEY_T)){
             if(flags.displayTrayectory){
                 flags.displayTrayectory = false;
-                for(int i = 0; i < (int)simulation.count; i++){
-                    simulation.bodies[i].trayectory.count = 0;
+                for(int i = 0; i < (int)simulation->count; i++){
+                    simulation->bodies[i].trayectory.count = 0;
                 }
             }
             else{
@@ -109,22 +109,22 @@ int main (int argc, char** argv)
             }
         }
 
-        if(simulation.collision == true){
-            update_collisions(&simulation);
+        if(simulation->collision == true){
+            update_collisions(simulation);
         }
 
         if(flags.displayTrayectory){
-            update_trayectories(&simulation);
+            update_trayectories(simulation);
         }
 
-        update_simulation(&simulation, tSpeed, simulation.scale);
+        update_simulation(simulation, tSpeed, simulation->scale);
 
         update_camera_pos(&camera);        
         update_zoom(&camera);
         simtime += tSpeed * GetFrameTime();
-        draw(camera, simulation, flags, simtime);
+        draw(camera, *simulation, flags, simtime);
     }
-
+    free(simulation);
     CloseWindow();
     return 0;
 }
