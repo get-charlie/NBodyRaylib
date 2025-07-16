@@ -8,7 +8,7 @@ OBJS = $(SRCS:.c=.o)
 
 CC = gcc
 CFLAGS = -I$(INC) -DGRAPHICS_API_OPENGL_33 -Wall -Wextra
-LIBS = $(INC)/libraylib.a -lGL -lm -lpthread -ldl -lrt -lX11
+LIBS = -lraylib -lGL -lm -lpthread -ldl -lrt -lX11
 
 all: $(PROJECT)
 
@@ -17,9 +17,6 @@ $(PROJECT): $(OBJS)
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
-
-run: all
-	./$(PROJECT) &
 
 clean:
 	rm -f $(SRC)/*.o $(PROJECT)
