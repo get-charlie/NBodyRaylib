@@ -31,8 +31,9 @@ void update_simulation(Simulation* simulation, float tSpeed, float scale){
             update_body_vel(&simulation->bodies[j], simulation->bodies[i], tSpeed, scale);
         }
         Body body = simulation->bodies[i];
-        body.position.x += body.velocity.x * GetFrameTime() * tSpeed;
-        body.position.y += body.velocity.y * GetFrameTime() * tSpeed;
+        float dt = GetFrameTime();
+        body.position.x += body.velocity.x * dt * tSpeed;
+        body.position.y += body.velocity.y * dt * tSpeed;
         simulation->bodies[i] = body;
     }
 }
