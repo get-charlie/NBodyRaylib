@@ -35,16 +35,11 @@ typedef struct {
 
 Body new_body(char* name, Color color, float mass, float radius, float posx, float posy, float velx, float vely, float scale);
 
-void init_universe(Simulation* simulation, int stars, int planets, int moons);
-
 void add_simulation_body(Simulation* simulation, Body body);
 void remove_simulation_body(Simulation* simulation, unsigned index);
 
 void add_tpoint(Body* body, Vector2 point);
 void update_trayectories(Simulation* simulation);
-
-void constrains(Simulation* simulation);
-void debug_simulation(Simulation simulation);
 
 #endif
 
