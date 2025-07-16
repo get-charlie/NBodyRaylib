@@ -13,8 +13,11 @@
 #include "gui.h"
 #include "loader.h"
 
-int main (int argc, char** argv){
-
+const int screenWidth = 1200;
+const int screenHeight = 750;
+// TODO unpasta this spagetti
+int main (int argc, char** argv)
+{
     Simulation simulation;
 
     srand(time(NULL));
@@ -25,14 +28,12 @@ int main (int argc, char** argv){
     }
     if(strstr(argv[1], "random")){
         load_random(&simulation, argv[1]);
-    }else{
+    }
+    else{
         load_simulation(&simulation, argv[1]);
     }
 
-    const int screenWidth = 1200;
-    const int screenHeight = 750;
     InitWindow(screenWidth, screenHeight, "StarSim2D");
-
 
     Camera2D camera = {0};
     camera.zoom = 0.1f;
@@ -54,7 +55,8 @@ int main (int argc, char** argv){
         if(IsKeyPressed(KEY_RIGHT)){
             if(tSpeed > 0.0 && tSpeed < 100000000.0){
                 tSpeed *= 10.0;
-            }else if(tSpeed < 1){
+            }
+            else if(tSpeed < 1){
                 tSpeed = 1.0;
             }
             flags.tSpeed = tSpeed;
@@ -71,31 +73,38 @@ int main (int argc, char** argv){
         if(IsKeyPressed(KEY_C)){
             if(simulation.collision){
                 simulation.collision = false;
-            }else{
+            }
+            else{
                 simulation.collision = true;
             }
         }
+
         if(IsKeyPressed(KEY_T)){
             if(flags.displayTrayectory){
                 flags.displayTrayectory = false;
-                for(int i = 0; i < simulation.count; i++){
+                for(int i = 0; i < (int)simulation.count; i++){
                     simulation.bodies[i].trayectory.count = 0;
                 }
-            }else{
+            }
+            else{
                 flags.displayTrayectory = true;
             }
         }
+
         if(IsKeyPressed(KEY_D)){
             if(flags.debug){
                 flags.debug = false;
-            }else{
+            }
+            else{
                 flags.debug = true;
             }
         }
+
         if(IsKeyPressed(KEY_N)){
             if(flags.names){
                 flags.names = false;
-            }else{
+            }
+            else{
                 flags.names = true;
             }
         }
@@ -119,4 +128,7 @@ int main (int argc, char** argv){
     CloseWindow();
     return 0;
 }
+
+
+
 

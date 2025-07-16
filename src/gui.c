@@ -1,15 +1,17 @@
 #include "gui.h"
 #include "physics.h"
 
-void update_camera_pos(Camera2D *camera){
-    if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)){
+void update_camera_pos(Camera2D *camera)
+{
+    if(IsMouseButtonDown(MOUSE_BUTTON_LEFT)){
         Vector2 delta = GetMouseDelta();
         delta = Vector2Scale(delta, -1.0f/camera->zoom);
         camera->target = Vector2Add(camera->target, delta);
     }
 }
 
-void update_zoom(Camera2D *camera){
+void update_zoom(Camera2D *camera)
+{
     float wheel = GetMouseWheelMove();
     if (wheel != 0){
         Vector2 mouseWorldPos = GetScreenToWorld2D(GetMousePosition(), *camera);
@@ -21,40 +23,47 @@ void update_zoom(Camera2D *camera){
     }
 }
 
-static float roundNearest10(float num) {
+static float roundNearest10(float num)
+{
     if (num <= 1) {
         return 1;
     }
     float exponent = floor(log10(num));
     return pow(10, exponent);
 }
-
-void draw(Camera2D camera, Simulation simulation, DisplayFlags flags, double simtime){
+// TODO remove distance markers
+// TODO divide this funcion into smaller functions
+#define MARKER_SCALE 20
+void draw(Camera2D camera, Simulation simulation, DisplayFlags flags, double simtime)
+{
     BeginDrawing();
         ClearBackground(BLACK);
         BeginMode2D(camera);
-            float step = 0.0;
-            float mul = (1.0 / camera.zoom);
-            mul = roundNearest10(mul);
             // Draw grid
-            for(int i = 0; i < GRID_LINES; i++){
+            float step = 0.0;
+            for(int i = 1; i <= GRID_LINES; i++){
                 DrawLine(step, -GRID_LEN, step, GRID_LEN, GRAY);
-                step += GRID_STEP * mul;
-            }
-            step = 0.0;
-            for(int i = 0; i < GRID_LINES; i++){
-                DrawLine(step, -GRID_LEN, step, GRID_LEN, GRAY);
-                step -= GRID_STEP * mul;
-            }
-            step = 0.0;
-            for(int i = 0; i < GRID_LINES; i++){
                 DrawLine(-GRID_LEN, step, GRID_LEN, step, GRAY);
-                step += GRID_STEP * mul;
+                DrawLine(-step, -GRID_LEN, -step, GRID_LEN, GRAY);
+                DrawLine(-GRID_LEN, -step, GRID_LEN, -step, GRAY);
+                step += GRID_STEP * roundNearest10(1.0/camera.zoom);
             }
             step = 0.0;
-            for(int i = 0; i < GRID_LINES; i++){
-                DrawLine(-GRID_LEN, step, GRID_LEN, step, GRAY);
-                step -= GRID_STEP * mul;
+            for(int i = 1; i <= 100; i++){
+                float zm = roundNearest10(1.0/(camera.zoom*50));
+                step += simulation.scale * zm;
+                DrawText(TextFormat(
+                    "%.0f AU", i * zm
+                ), step, 0, (1/camera.zoom) * MARKER_SCALE, WHITE);
+                DrawText(TextFormat(
+                    "%.0f AU", i * zm
+                ), 0, step, (1/camera.zoom) * MARKER_SCALE, WHITE);
+                DrawText(TextFormat(
+                    "%.0f AU", i * zm
+                ), -step, 0, (1/camera.zoom) * MARKER_SCALE, WHITE);
+                DrawText(TextFormat(
+                    "%.0f AU", i * zm
+                ), 0, -step, (1/camera.zoom) * MARKER_SCALE, WHITE);
             }
             // Draw asix lines
             DrawLine(0, -GRID_LEN, 0, GRID_LEN, RED);
@@ -76,15 +85,34 @@ void draw(Camera2D camera, Simulation simulation, DisplayFlags flags, double sim
                 DrawCircle(body.position.x, body.position.y, body.radius, body.color);
                 // Draw name and mass
                 if(flags.names){
-                    DrawText(TextFormat("%s m=%.3lf EM", body.name, body.mass / EARTH_MASS), body.position.x, body.position.y - (1/camera.zoom) * 15, (1/camera.zoom) * 20, WHITE);
+                    DrawText(TextFormat(
+                        "%s m=%.3lf EM", 
+                        body.name, 
+                        body.mass / EARTH_MASS
+                    ), body.position.x, body.position.y - (1/camera.zoom) * 15, (1/camera.zoom) * 20, WHITE);
                 }
             }
         EndMode2D();
         if(flags.debug){
-            DrawText(TextFormat("FPS: %d Bodies: %d Col: %s tSpeed: %.0lf", GetFPS(), simulation.count, simulation.collision ? "ON" : "OFF",  flags.tSpeed), 30, 30, 40, LIGHTGRAY);
-            DrawText(TextFormat("t: %03uy %03ud %02uh %02um %02us", 
-            (unsigned)simtime/(365*24*60*60), ((unsigned)simtime/(24*60*60)%365), ((unsigned)simtime/(60*60)%24), ((unsigned)simtime/60)%60, (unsigned)simtime%60),
-            30, 70, 40, LIGHTGRAY);
+            DrawText(TextFormat(
+                "FPS: %d Bodies: %d Col: %s tSpeed: %.0lf x: %f AU y: %f AU z: %f", 
+                GetFPS(), 
+                simulation.count, 
+                simulation.collision ? "ON" : "OFF", 
+                flags.tSpeed, 
+                camera.target.x / simulation.scale, 
+                camera.target.y / simulation.scale, 
+                camera.zoom
+            ), 30, 30, 40, LIGHTGRAY);
+
+            DrawText(TextFormat(
+                "t: %03uy %03ud %02uh %02um %02us", 
+                 (unsigned)simtime/(365*24*60*60),
+                ((unsigned)simtime/(24*60*60))%365, 
+                ((unsigned)simtime/(60*60))%24, 
+                ((unsigned)simtime/60)%60, 
+                 (unsigned)simtime%60
+            ), 30, 70, 40, LIGHTGRAY);
         }
     EndDrawing();
 }

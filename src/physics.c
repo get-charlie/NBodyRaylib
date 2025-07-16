@@ -1,12 +1,14 @@
 #include "physics.h"
 
-#include <stdio.h>
 #include <string.h>
 
-float get_distance(Vector2 p1, Vector2 p2){
+float get_distance(Vector2 p1, Vector2 p2)
+{
     return sqrt(pow(p1.x - p2.x, 2) + pow(p1.y - p2.y, 2));
 }
-static Vector2 get_gforce(Body b1, Body b2, double scale){
+
+static Vector2 get_gforce(Body b1, Body b2, double scale)
+{
     float d = get_distance(b1.position, b2.position) * (AU / scale);
     float F = (G_CONST * b1.mass * b2.mass) / pow(d, 2);
     Vector2 vF;
@@ -14,13 +16,17 @@ static Vector2 get_gforce(Body b1, Body b2, double scale){
     vF.y = (F * (b2.position.y - b1.position.y)) / d;
     return vF;
 }
-static void update_body_vel(Body* update, Body reference, float tSpeed, float scale){
+
+static void update_body_vel(Body* update, Body reference, float tSpeed, float scale)
+{
     Vector2 vF = get_gforce(*update, reference, scale);
     update->velocity.x += (vF.x / update->mass) * GetFrameTime() * tSpeed;
     update->velocity.y += (vF.y / update->mass) * GetFrameTime() * tSpeed;
 }
 
-static Color color_average(Color c1, Color c2){
+// TODO remove
+static Color color_average(Color c1, Color c2)
+{
     Color color;
     color.r = (c1.r + c2.r) / 2;
     color.g = (c1.g + c2.g) / 2;
@@ -28,16 +34,22 @@ static Color color_average(Color c1, Color c2){
     color.a = (c1.a + c2.a) / 2;
     return color;
 }
-static Body get_more_massive(Body b1, Body b2){
+// TODO remove
+static Body get_more_massive(Body b1, Body b2)
+{
     return b1.mass >= b2.mass ? b1 : b2;
 }
-static Body get_less_massive(Body b1, Body b2){
+// TODO remove
+static Body get_less_massive(Body b1, Body b2)
+{
     return b1.mass < b2.mass ? b1 : b2;
 }
-static float get_new_radius(float r1, float r2){
+// TODO remove
+static float get_new_radius(float r1, float r2)
+{
     return cbrt(pow(r1, 3) + pow(r2, 3));
 }
-
+// TODO remove
 static Vector2 get_collision_velocity(Body b1, Body b2){
     Vector2 vf;
     float m1 = b1.mass, m2 = b2.mass;
@@ -47,7 +59,7 @@ static Vector2 get_collision_velocity(Body b1, Body b2){
     vf.y = vy1 - (2*m2/(m1+m2)) * (((vx1-vx2)*(x1-x2)+(vy1-vy2)*(y1-y2)) / ((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2))) * (y1-y2);
     return vf;
 }
-
+// TODO remove
 static Body merge_bodies(Body b1, Body b2){
     Body new;
     new.mass = b1.mass + b2.mass;
@@ -59,9 +71,11 @@ static Body merge_bodies(Body b1, Body b2){
     strncpy(new.name, get_more_massive(b1, b2).name, NAME_LEN);
     return new;
 }
+// Todo remove
 static bool body_collision(Body b1, Body b2){
     return get_distance(b1.position, b2.position) <= b1.radius + b2.radius;
 }
+// Todo remove
 void update_collisions(Simulation* simulation){
     for(unsigned i = 0; i < simulation->count; i++){
         for(unsigned j = i + 1; j < simulation->count; j++){
@@ -73,10 +87,11 @@ void update_collisions(Simulation* simulation){
         }
     }
 }
+
 void update_simulation(Simulation* simulation, float tSpeed, float scale){
     for(unsigned i = 0; i < simulation->count; i++){
         for(unsigned j = i + 1; j < simulation->count; j++){
-            if(i != j){
+            if(i != j){ // is this necessary?
                 update_body_vel(&simulation->bodies[i], simulation->bodies[j], tSpeed, scale);
                 update_body_vel(&simulation->bodies[j], simulation->bodies[i], tSpeed, scale);
             }

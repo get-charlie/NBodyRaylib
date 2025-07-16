@@ -1,7 +1,8 @@
 #include "loader.h"
 
-static char * read_file(const char * path){
-    FILE * file = fopen(path, "rb");
+static char* read_file(const char* path)
+{
+    FILE* file = fopen(path, "rb");
     if(!file){
         printf("Error: Could not open file %s\n", path);
         return NULL;
@@ -11,7 +12,7 @@ static char * read_file(const char * path){
     long length = ftell(file);
     fseek(file, 0, SEEK_SET);
 
-    char * jsondata = malloc(length + 1);
+    char* jsondata = malloc(length + 1);
     if(!jsondata){
         perror("Error: Malloc failed\n");
         fclose(file);
@@ -25,10 +26,11 @@ static char * read_file(const char * path){
     return jsondata;
 }
 
-static cJSON * parse_json(const char * jsondata){
-    cJSON *json = cJSON_Parse(jsondata);
+static cJSON* parse_json(const char * jsondata)
+{
+    cJSON* json = cJSON_Parse(jsondata);
     if(!json){
-        const char * error_ptr = cJSON_GetErrorPtr();
+        const char* error_ptr = cJSON_GetErrorPtr();
         if(error_ptr){
             printf("Error before: %s\n", error_ptr);
         }
@@ -38,28 +40,29 @@ static cJSON * parse_json(const char * jsondata){
 }
 
 // returns 1 if an error is found
-int load_simulation(Simulation * simulation, const char * path){
+int load_simulation(Simulation * simulation, const char * path)
+{
     *simulation = (Simulation){0};
-    char * jsondata = read_file(path);
+    char* jsondata = read_file(path);
     if(!jsondata){
         printf("Error: could not read json file\n");
         return 1;
     }
 
-    cJSON * json = parse_json(jsondata);
+    cJSON* json = parse_json(jsondata);
     if (!json){
         printf("Error: Could not parse json\n");
         return 1;
     }
     
-    cJSON *scale = cJSON_GetObjectItemCaseSensitive(json, "scale");
+    cJSON* scale = cJSON_GetObjectItemCaseSensitive(json, "scale");
     if(!cJSON_IsNumber(scale)){
         printf("Error: time must me a number\n");
         return 1;
     }
     simulation->scale = scale->valuedouble;
 
-    cJSON *collision = cJSON_GetObjectItemCaseSensitive(json, "collision");
+    cJSON* collision = cJSON_GetObjectItemCaseSensitive(json, "collision");
     if(!cJSON_IsBool(collision)){
         printf("Error: collision must me a boolean\n");
         return 1;
@@ -68,13 +71,13 @@ int load_simulation(Simulation * simulation, const char * path){
         simulation->collision = true;
     }
 
-    cJSON * bodiesjson =  cJSON_GetObjectItemCaseSensitive(json, "bodies");
+    cJSON* bodiesjson =  cJSON_GetObjectItemCaseSensitive(json, "bodies");
     if (!cJSON_IsArray(bodiesjson)){
         printf("Error: file is formated wrong\n");
         return 1;
     }
     
-    cJSON * body = NULL;
+    cJSON* body = NULL;
     cJSON_ArrayForEach(body, bodiesjson){
 
         if (!cJSON_IsObject(body)){
@@ -82,41 +85,41 @@ int load_simulation(Simulation * simulation, const char * path){
             return 1;
         }
 
-        cJSON *name = cJSON_GetObjectItemCaseSensitive(body, "name");
-        cJSON *color = cJSON_GetObjectItemCaseSensitive(body, "color");
-        cJSON *mass = cJSON_GetObjectItemCaseSensitive(body, "mass");
-        cJSON *radius = cJSON_GetObjectItemCaseSensitive(body, "radius");
-        cJSON *position = cJSON_GetObjectItemCaseSensitive(body, "position");
-        cJSON *velocity = cJSON_GetObjectItemCaseSensitive(body, "velocity");
+        cJSON* name = cJSON_GetObjectItemCaseSensitive(body, "name");
+        cJSON* color = cJSON_GetObjectItemCaseSensitive(body, "color");
+        cJSON* mass = cJSON_GetObjectItemCaseSensitive(body, "mass");
+        cJSON* radius = cJSON_GetObjectItemCaseSensitive(body, "radius");
+        cJSON* position = cJSON_GetObjectItemCaseSensitive(body, "position");
+        cJSON* velocity = cJSON_GetObjectItemCaseSensitive(body, "velocity");
 
         if(!cJSON_IsString(name) || !cJSON_IsObject(color) || !cJSON_IsNumber(mass) || !cJSON_IsNumber(radius) || !cJSON_IsObject(position) || !cJSON_IsObject(velocity)){
             printf("Error: invalid data in body object\n");
             return 1;
         }
 
-        cJSON *r = cJSON_GetObjectItemCaseSensitive(color, "r");
-        cJSON *g = cJSON_GetObjectItemCaseSensitive(color, "g");
-        cJSON *b = cJSON_GetObjectItemCaseSensitive(color, "b");
+        cJSON* r = cJSON_GetObjectItemCaseSensitive(color, "r");
+        cJSON* g = cJSON_GetObjectItemCaseSensitive(color, "g");
+        cJSON* b = cJSON_GetObjectItemCaseSensitive(color, "b");
 
-        if (!cJSON_IsNumber(r) || !cJSON_IsNumber(g) || !cJSON_IsNumber(b)) {
+        if (!cJSON_IsNumber(r) || !cJSON_IsNumber(g) || !cJSON_IsNumber(b)){
             printf("Error: Invalid color data in body object\n");
             cJSON_Delete(json);
             return 1;
         }
 
-        cJSON *x = cJSON_GetObjectItemCaseSensitive(position, "x");
-        cJSON *y = cJSON_GetObjectItemCaseSensitive(position, "y");
+        cJSON* x = cJSON_GetObjectItemCaseSensitive(position, "x");
+        cJSON* y = cJSON_GetObjectItemCaseSensitive(position, "y");
 
-        if (!cJSON_IsNumber(x) || !cJSON_IsNumber(y)) {
+        if(!cJSON_IsNumber(x) || !cJSON_IsNumber(y)){
             printf("Error: Invalid position data in body object\n");
             cJSON_Delete(json);
             return 1;
         }
 
-        cJSON *vx = cJSON_GetObjectItemCaseSensitive(velocity, "x");
-        cJSON *vy = cJSON_GetObjectItemCaseSensitive(velocity, "y");
+        cJSON* vx = cJSON_GetObjectItemCaseSensitive(velocity, "x");
+        cJSON* vy = cJSON_GetObjectItemCaseSensitive(velocity, "y");
 
-        if (!cJSON_IsNumber(vx) || !cJSON_IsNumber(vy)) {
+        if(!cJSON_IsNumber(vx) || !cJSON_IsNumber(vy)){
             printf("Error: Invalid velocity data in body object\n");
             cJSON_Delete(json);
             return 1;
@@ -138,6 +141,7 @@ int load_simulation(Simulation * simulation, const char * path){
 
 
 // returns 1 if an error is found
+// TODO REMOVE
 int load_random(Simulation * simulation, const char * path){
     *simulation = (Simulation){0};
     char * jsondata = read_file(path);

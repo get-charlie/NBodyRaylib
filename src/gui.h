@@ -16,12 +16,12 @@
 
 #include "simulation.h"
 
-typedef struct{
+typedef struct {
     float   tSpeed;
     bool    debug;
     bool    names;
     bool    displayTrayectory;
-}DisplayFlags;
+} DisplayFlags;
 
 void update_camera_pos(Camera2D *camera);
 void update_zoom(Camera2D *camera);
