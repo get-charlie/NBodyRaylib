@@ -58,14 +58,11 @@ static void draw_trayectories(Body body, DisplayFlags flags)
     }
 }
 
-static void draw_name_mass(Camera2D camera, Body body, DisplayFlags flags)
+static void draw_name(Camera2D camera, Body body, DisplayFlags flags)
 {
     if(flags.names){
-        DrawText(TextFormat(
-            "%s m=%.3lf EM", 
-            body.name, 
-            body.mass / EARTH_MASS
-        ), body.position.x, body.position.y - (1/camera.zoom) * 15, (1/camera.zoom) * 20, WHITE);
+        DrawText(TextFormat( "%s", body.name), 
+            body.position.x, body.position.y - (1/camera.zoom) * 15, (1/camera.zoom) * 20, WHITE);
     }
 }
 
@@ -75,7 +72,7 @@ static void draw_bodies(Camera2D camera, Simulation simulation, DisplayFlags fla
         Body body = simulation.bodies[i];
         DrawCircle(body.position.x, body.position.y, body.radius, body.color);
         draw_trayectories(body, flags);
-        draw_name_mass(camera, body, flags);
+        draw_name(camera, body, flags);
     }
 }
 
