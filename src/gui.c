@@ -103,7 +103,7 @@ void draw(Camera2D camera, Simulation simulation, DisplayFlags flags, double sim
                 camera.target.x / simulation.scale, 
                 camera.target.y / simulation.scale, 
                 camera.zoom
-            ), 30, 30, 40, LIGHTGRAY);
+            ), TEXT_X, TEXT_Y, TEXT_SIZE, LIGHTGRAY);
 
             DrawText(TextFormat(
                 "t: %03uy %03ud %02uh %02um %02us", 
@@ -112,7 +112,7 @@ void draw(Camera2D camera, Simulation simulation, DisplayFlags flags, double sim
                 ((unsigned)simtime/(60*60))%24, 
                 ((unsigned)simtime/60)%60, 
                  (unsigned)simtime%60
-            ), 30, 70, 40, LIGHTGRAY);
+            ), TEXT_X, TEXT_Y + TEXT_OFFSET, TEXT_SIZE, LIGHTGRAY);
         }
     EndDrawing();
 }

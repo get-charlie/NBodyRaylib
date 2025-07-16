@@ -23,7 +23,7 @@ int main (int argc, char** argv)
     srand(time(NULL));
 
     if(argc != 2){
-        printf("Use: starsim2d <simulation.json>\n");
+        printf("Use: %s <simulation.json>\n", argv[0]);
         return 1;
     }
     if(strstr(argv[1], "random")){

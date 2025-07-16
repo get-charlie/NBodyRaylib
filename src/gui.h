@@ -16,6 +16,11 @@
 
 #include "simulation.h"
 
+#define TEXT_X 20
+#define TEXT_Y 20
+#define TEXT_SIZE 30
+#define TEXT_OFFSET (TEXT_SIZE + 10)
+
 typedef struct {
     float   tSpeed;
     bool    debug;
