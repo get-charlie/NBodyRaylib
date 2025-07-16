@@ -1,3 +1,6 @@
+
+<img width="1196" height="741" alt="BodySim" src="https://github.com/user-attachments/assets/b8002fa2-c4f6-4f46-a111-fd30b7c969cc" />  
+
 # NBody Raylib
 An n-body simulation made with Raylib and C.  
 This projects takes a JSON file as an input and runs a real time n-body simulation with visual rendering.
