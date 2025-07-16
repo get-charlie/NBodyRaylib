@@ -27,10 +27,8 @@ static void update_body_vel(Body* update, Body reference, float tSpeed, float sc
 void update_simulation(Simulation* simulation, float tSpeed, float scale){
     for(unsigned i = 0; i < simulation->count; i++){
         for(unsigned j = i + 1; j < simulation->count; j++){
-            if(i != j){ // is this necessary?
-                update_body_vel(&simulation->bodies[i], simulation->bodies[j], tSpeed, scale);
-                update_body_vel(&simulation->bodies[j], simulation->bodies[i], tSpeed, scale);
-            }
+            update_body_vel(&simulation->bodies[i], simulation->bodies[j], tSpeed, scale);
+            update_body_vel(&simulation->bodies[j], simulation->bodies[i], tSpeed, scale);
         }
         Body body = simulation->bodies[i];
         body.position.x += body.velocity.x * GetFrameTime() * tSpeed;
