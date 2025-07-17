@@ -1,7 +1,7 @@
 #include "gui.h"
 #include "physics.h"
 
-void update_camera_pos(Camera2D* camera)
+static void update_camera_pos(Camera2D* camera)
 {
     if(IsMouseButtonDown(MOUSE_BUTTON_LEFT)){
         Vector2 delta = GetMouseDelta();
@@ -10,7 +10,7 @@ void update_camera_pos(Camera2D* camera)
     }
 }
 
-void update_zoom(Camera2D* camera)
+static void update_zoom(Camera2D* camera)
 {
     float wheel = GetMouseWheelMove();
     if (wheel != 0){
@@ -21,6 +21,12 @@ void update_zoom(Camera2D* camera)
         if (wheel < 0) scaleFactor = 1.0f/scaleFactor;
         camera->zoom = Clamp(camera->zoom*scaleFactor, MIN_ZOOM, MAX_ZOOM);
     }
+}
+
+void update_camera(Camera2D* camera)
+{
+    update_camera_pos(camera);
+    update_zoom(camera);
 }
 
 static float roundNearest10(float num)
@@ -81,10 +87,10 @@ static void draw_debug(Simulation simulation, DisplayFlags flags, double simtime
     if(flags.debug){
         // Display debug info
         DrawText(TextFormat(
-            "FPS: %d Bodies: %d tSpeed: %.0lf", 
+            "FPS: %d Bodies: %d t_speed: %.0lf", 
             GetFPS(), 
             simulation.count, 
-            flags.tSpeed 
+            flags.t_speed 
         ), TEXT_X, TEXT_Y, TEXT_SIZE, LIGHTGRAY);
         // Display time
         DrawText(TextFormat(

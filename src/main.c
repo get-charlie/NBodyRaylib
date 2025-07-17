@@ -37,19 +37,19 @@ static void handle_input(Simulation* simulation, DisplayFlags* flags)
     }
     // Time controls
     if(IsKeyPressed(KEY_RIGHT)){
-        if(flags->tSpeed > 0.0 && flags->tSpeed < MAX_SIM_SPEED){
-            flags->tSpeed *= 10.0;
+        if(flags->t_speed > 0.0 && flags->t_speed < MAX_SIM_SPEED){
+            flags->t_speed *= 10.0;
         }
-        else if(flags->tSpeed < 1){
-            flags->tSpeed = 1.0;
+        else if(flags->t_speed < 1){
+            flags->t_speed = 1.0;
         }
     }
     if(IsKeyPressed(KEY_LEFT)){
-        if(flags->tSpeed > 1.0){
-            flags->tSpeed /= 10.0;
+        if(flags->t_speed > 1.0){
+            flags->t_speed /= 10.0;
         }
         else{
-            flags->tSpeed *= 0.0;
+            flags->t_speed *= 0.0;
         }
     }
     // Trayectories
@@ -71,7 +71,7 @@ static void handle_input(Simulation* simulation, DisplayFlags* flags)
     }
 }
 
-int main (int argc, char** argv)
+int main(int argc, char** argv)
 {
     Simulation* simulation = malloc(sizeof(Simulation));
     if(simulation == NULL){
@@ -89,13 +89,13 @@ int main (int argc, char** argv)
     InitWindow(screenWidth, screenHeight, "StarSim2D");
     Camera2D camera = {0};
     camera.zoom = 0.1f;
-    SetTargetFPS(60);    
+    SetTargetFPS(60);
 
     DisplayFlags flags = {0};
     flags.debug = true;
     flags.names = true;
     flags.displayTrayectory = true;
-    flags.tSpeed = 1.0;
+    flags.t_speed = 1.0;
     
     double simtime = 0.0;
 
@@ -107,11 +107,9 @@ int main (int argc, char** argv)
             update_trayectories(simulation);
         }
 
-        update_simulation(simulation, flags.tSpeed, simulation->scale);
-
-        update_camera_pos(&camera);
-        update_zoom(&camera);
-        simtime += flags.tSpeed * GetFrameTime();
+        update_simulation(simulation, flags.t_speed);
+        update_camera(&camera);
+        simtime += flags.t_speed * GetFrameTime();
         draw(camera, *simulation, flags, simtime);
     }
 

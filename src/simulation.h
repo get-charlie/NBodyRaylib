@@ -1,11 +1,12 @@
 #ifndef _SIMULATION_H
 #define _SIMULATION_H
 
-#include "raylib.h"
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <string.h>
+#include "raylib.h"
 
 #define NAME_LEN        32
 #define MAX_BODIES      1000

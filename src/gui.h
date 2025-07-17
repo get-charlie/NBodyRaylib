@@ -22,14 +22,13 @@
 #define TEXT_OFFSET (TEXT_SIZE + 10)
 
 typedef struct {
-    float   tSpeed;
+    float   t_speed;
     bool    debug;
     bool    names;
     bool    displayTrayectory;
 } DisplayFlags;
 
-void update_camera_pos(Camera2D *camera);
-void update_zoom(Camera2D *camera);
+void update_camera(Camera2D *camera);
 void draw(Camera2D camera, Simulation simulation, DisplayFlags flags, double simtime);
 
 #endif

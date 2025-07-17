@@ -1,6 +1,5 @@
 #include "simulation.h"
 #include "physics.h"
-#include <string.h>
 
 void add_simulation_body(Simulation* simulation, Body body)
 {
@@ -54,13 +53,13 @@ Body new_body(char* name, Color color, float mass, float radius, float posx, flo
 {
     Body new = {0};
     strncpy(new.name, name, NAME_LEN);
+    new.color = color;
     new.mass = mass;
     new.radius = radius;
     new.position.x = posx * scale;
     new.position.y = posy * scale * -1; // Reverse Y asix
     new.velocity.x = velx * KM_TO_AU * scale;
     new.velocity.y = vely * KM_TO_AU * scale;
-    new.color = color;
     return new;
 }
 
