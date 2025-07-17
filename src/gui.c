@@ -99,7 +99,7 @@ static void draw_debug(Simulation simulation, DisplayFlags flags, double simtime
             ((unsigned)simtime / (24 * 60 * 60)) % 365, // seconds to days      0...364
             ((unsigned)simtime / (60 * 60)) % 24,       // seconds to hours     0...23
             ((unsigned)simtime / 60) % 60,              // seconds to minutes   0...59
-             (unsigned)simtime % 60                     // secods               0...59
+             (unsigned)simtime % 60                     // seconds              0...59
         ), TEXT_X, TEXT_Y + TEXT_OFFSET, TEXT_SIZE, LIGHTGRAY);
     }
 }
