@@ -28,6 +28,7 @@ static void help(int argc, char** argv)
     }
 }
 
+#define MAX_SIM_SPEED   10000000.0
 static void handle_input(Simulation* simulation, DisplayFlags* flags)
 {
     // Full screen
@@ -36,7 +37,7 @@ static void handle_input(Simulation* simulation, DisplayFlags* flags)
     }
     // Time controls
     if(IsKeyPressed(KEY_RIGHT)){
-        if(flags->tSpeed > 0.0 && flags->tSpeed < 100000000.0){
+        if(flags->tSpeed > 0.0 && flags->tSpeed < MAX_SIM_SPEED){
             flags->tSpeed *= 10.0;
         }
         else if(flags->tSpeed < 1){
