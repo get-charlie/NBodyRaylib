@@ -2,7 +2,7 @@
 
 # NBody Raylib
 An n-body simulation made with Raylib and C.  
-This projects takes a JSON file as an input and runs a real time n-body simulation with visual rendering.
+This projects takes a JSON file as an input and runs a real time n-body simulation with visual rendering.  
 JSON files are loaded with cJSON.
 
 ## Building
