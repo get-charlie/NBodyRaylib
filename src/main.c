@@ -2,7 +2,6 @@
 #include "rlgl.h"
 #include "raymath.h"
 
-#include <stdio.h>
 #include <math.h>
 #include <time.h>
 #include <stdlib.h>
@@ -74,7 +73,6 @@ static void handle_input(Simulation* simulation, DisplayFlags* flags)
 int main(int argc, char** argv)
 {
     help(argc, argv);
-    srand(time(NULL));
 
     Simulation* simulation = malloc(sizeof(Simulation));
     if(simulation == NULL){
