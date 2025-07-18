@@ -73,17 +73,19 @@ static void handle_input(Simulation* simulation, DisplayFlags* flags)
 
 int main(int argc, char** argv)
 {
+    help(argc, argv);
+    srand(time(NULL));
+
     Simulation* simulation = malloc(sizeof(Simulation));
     if(simulation == NULL){
         fprintf(stderr, "Could not allocate simulation.\n");
+        exit(1);
     }
-
-    srand(time(NULL));
-
-    help(argc, argv);
 
     if(load_simulation(simulation, argv[1])){
         fprintf(stderr, "Error loading the file.\n");
+        free(simulation);
+        exit(1);
     }
 
     InitWindow(screenWidth, screenHeight, "StarSim2D");
