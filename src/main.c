@@ -86,7 +86,7 @@ int main(int argc, char** argv)
         exit(1);
     }
 
-    InitWindow(screenWidth, screenHeight, "StarSim2D");
+    InitWindow(screenWidth, screenHeight, "NBodyRaylib");
     Camera2D camera = {0};
     camera.zoom = 0.1f;
     SetTargetFPS(60);
