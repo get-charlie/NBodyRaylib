@@ -25,7 +25,7 @@ typedef struct {
     float   t_speed;
     bool    debug;
     bool    names;
-    bool    displayTrayectory;
+    bool    display_trayectory;
 } DisplayFlags;
 
 void update_camera(Camera2D *camera);

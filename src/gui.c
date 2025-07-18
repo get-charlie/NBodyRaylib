@@ -55,7 +55,7 @@ static void draw_grid(Camera2D camera)
 
 static void draw_trayectories(Body body, DisplayFlags flags)
 {
-    if(flags.displayTrayectory && body.trayectory.count > 1){
+    if(flags.display_trayectory && body.trayectory.count > 1){
         for(unsigned j = 1; j < body.trayectory.count; j++){
             DrawLineV(body.trayectory.points[j - 1], body.trayectory.points[j], body.color);
         }
@@ -87,7 +87,7 @@ static void draw_debug(Simulation simulation, DisplayFlags flags, double simtime
     if(flags.debug){
         // Display debug info
         DrawText(TextFormat(
-            "FPS: %d Bodies: %d t_speed: %.0lf", 
+            "FPS: %d Bodies: %d Time Speed: %.0lf", 
             GetFPS(), 
             simulation.count, 
             flags.t_speed 

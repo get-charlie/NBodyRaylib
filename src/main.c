@@ -53,8 +53,8 @@ static void handle_input(Simulation* simulation, DisplayFlags* flags)
     }
     // Trayectories
     if(IsKeyPressed(KEY_T)){
-        flags->displayTrayectory = !flags->displayTrayectory;
-        if(flags->displayTrayectory){
+        flags->display_trayectory = !flags->display_trayectory;
+        if(flags->display_trayectory){
             for(int i = 0; i < (int)simulation->count; i++){
                 simulation->bodies[i].trayectory.count = 0;
             }
@@ -94,7 +94,7 @@ int main(int argc, char** argv)
     DisplayFlags flags = {0};
     flags.debug = true;
     flags.names = true;
-    flags.displayTrayectory = true;
+    flags.display_trayectory = true;
     flags.t_speed = 1.0;
     
     double simtime = 0.0;
@@ -103,7 +103,7 @@ int main(int argc, char** argv)
         
         handle_input(simulation, &flags);
 
-        if(flags.displayTrayectory){
+        if(flags.display_trayectory){
             update_trayectories(simulation);
         }
 
