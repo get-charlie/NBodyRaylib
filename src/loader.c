@@ -50,6 +50,7 @@ int load_simulation(Simulation* simulation, const char* path)
     }
 
     cJSON* json = parse_json(jsondata);
+    free(jsondata);
     if(!json){
         fprintf(stderr, "Error: Could not parse json\n");
         return 1;
@@ -57,6 +58,7 @@ int load_simulation(Simulation* simulation, const char* path)
     
     cJSON* scale = cJSON_GetObjectItemCaseSensitive(json, "scale");
     if(!cJSON_IsNumber(scale)){
+        cJSON_Delete(json);
         fprintf(stderr, "Error: time must me a number\n");
         return 1;
     }
@@ -65,6 +67,7 @@ int load_simulation(Simulation* simulation, const char* path)
     cJSON* bodiesjson =  cJSON_GetObjectItemCaseSensitive(json, "bodies");
     if(!cJSON_IsArray(bodiesjson)){
         fprintf(stderr, "Error: file is formated wrong\n");
+        cJSON_Delete(json);
         return 1;
     }
     
@@ -73,6 +76,7 @@ int load_simulation(Simulation* simulation, const char* path)
 
         if(!cJSON_IsObject(body)){
             fprintf(stderr, "Error: invalid data in body object\n");
+            cJSON_Delete(json);
             return 1;
         }
 
@@ -85,6 +89,7 @@ int load_simulation(Simulation* simulation, const char* path)
 
         if(!cJSON_IsString(name) || !cJSON_IsObject(color) || !cJSON_IsNumber(mass) || !cJSON_IsNumber(radius) || !cJSON_IsObject(position) || !cJSON_IsObject(velocity)){
             fprintf(stderr, "Error: invalid data in body object\n");
+            cJSON_Delete(json);
             return 1;
         }
 
