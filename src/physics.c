@@ -6,8 +6,7 @@
 //
 // Computing the forces is O(n^2) and is what the threads are for, while
 // moving the bodies is O(n) and only pays for the synchronization on big
-// systems, hence the two thresholds.
-#define MIN_PARALLEL_FORCES 64
+// systems.
 #define MIN_PARALLEL_MOVES  512
 
 typedef struct {
@@ -59,14 +58,30 @@ static void drift_task(void* arg, unsigned start, unsigned end, unsigned worker)
     }
 }
 
+unsigned threads_for_bodies(unsigned count)
+{
+    if(count < MIN_THREADED_BODIES){
+        return 1;
+    }
+    unsigned threads = count / BODIES_PER_THREAD;
+    unsigned cores = cpu_count();
+    if(threads > cores){
+        threads = cores;
+    }
+    return threads < 1 ? 1 : threads;
+}
+
 static void forces(ThreadPool* pool, StepJob* job)
 {
-    threadpool_run(pool, accel_task, job, job->simulation->count, MIN_PARALLEL_FORCES);
+    unsigned count = job->simulation->count;
+    threadpool_run(pool, accel_task, job, count, threads_for_bodies(count));
 }
 
 static void move(ThreadPool* pool, ThreadTask task, StepJob* job)
 {
-    threadpool_run(pool, task, job, job->simulation->count, MIN_PARALLEL_MOVES);
+    unsigned count = job->simulation->count;
+    unsigned threads = count >= MIN_PARALLEL_MOVES ? threads_for_bodies(count) : 1;
+    threadpool_run(pool, task, job, count, threads);
 }
 
 void update_simulation(Simulation* simulation, ThreadPool* pool, double elapsed)

@@ -6,26 +6,54 @@ This projects takes a JSON file as an input and runs a real time n-body simulati
 JSON files are loaded with cJSON.
 
 The simulation runs in double precision SI units (meters, kilograms, seconds) on a pool of
-POSIX threads, and the renderer draws it in 3D with an orbital camera that can follow any body.
+POSIX threads, and the renderer draws it in 3D with an orbital camera that can follow any
+body. Everything it does has a button on the toolbar, the keyboard shortcuts are only a
+shortcut.
 
 ## Building
 1. Install Raylib on your system
 2. Clone this repository
 3. Compile with `make`
 
-## Trying some examples
-You can find some examples on the `examples/` directory.  
-Run them with `./BodySim <example.json>`
+## Running
+Starting the program with no arguments opens the main menu, where a simulation can be
+
+- created **empty**, to be filled with the body creator,
+- **opened** from any json file of the working directory or of `examples/`,
+- or **generated at random**, choosing the number of bodies, the mass range, the orbit
+  range, the thickness of the disc, the mass of the central star and the seed.
 
 ```bash
-./BodySim examples/solar_system.json         # 2D files still work, they run on the z = 0 plane
-./BodySim examples/inclined_orbits.json      # orbits on different planes
-./BodySim examples/solar_system.json -t 4    # limit the simulation to 4 threads
+./BodySim                                    # main menu
+./BodySim examples/solar_system_3d.json      # straight into a simulation
 ```
 
-| Option       | Description                                            |
-|--------------|--------------------------------------------------------|
-| `-t threads` | Worker threads of the simulation (default: one per core) |
+A running simulation can be written back to disk at any time with `Save as...`, either to a
+new file or replacing one of the existing ones, and what it writes is an ordinary simulation
+json that can be opened again.
+
+## Examples
+You can find some examples on the `examples/` directory, run them with
+`./BodySim <example.json>` or open them from the menu.
+
+| File                     | Description                                                   |
+|--------------------------|---------------------------------------------------------------|
+| `solar_system_3d.json`   | The Sun, the eight planets, the Moon and Pluto with their real three dimensional J2000 positions and velocities |
+| `nearest_stars.json`     | The Sun and the stars within ten light years, from their right ascension, declination, distance, proper motion and radial velocity |
+| `inclined_orbits.json`   | A star with orbits on five different planes                   |
+| `solar_system.json`      | The flat solar system of the 2D version                       |
+| `three_body1.json`, ...  | Small systems to watch chaos happen                           |
+
+The two catalog based examples come from published values (JPL keplerian elements and
+Hipparcos/Gaia astrometry), but they are still an approximation: the planets are built from
+mean elements, and the close binaries (Alpha Centauri A/B, Sirius A/B) are rebuilt from
+their semi major axis because their catalog coordinates are identical at this precision.
+
+## Threads
+The number of threads is decided by the program, not by the user: the force computation is
+O(n^2), so it is split between one thread per 32 bodies, bounded by the processors of the
+machine, and systems under 64 bodies run on a single thread, where the synchronization would
+cost more than it saves. The debug line shows how many threads the current system is using.
 
 ## Creating Custom Simulations
 Create a custom simulation by writing a JSON file.
@@ -42,6 +70,9 @@ Create a custom simulation by writing a JSON file.
 `z` is optional on both vectors, files written for the 2D version load unchanged and run on
 the `z = 0` plane. Positions and velocities are physical values: `scale` only decides how big
 the bodies look, it no longer affects the simulation itself.
+
+`z` is the vertical axis of the scene, so `x` and `y` span the horizontal plane the grid is
+drawn on, and the poles of every body point up.
 
 ### Example: 
 ```json
@@ -74,7 +105,7 @@ Run your custom simulation with:
 ```
 
 ## Simulation Controls
-The following controls are available during simulation:
+Every one of these has a button on the toolbar on the left, and most of them a key:
 
 | Key / Mouse         | Action                                      |
 |---------------------|---------------------------------------------|
@@ -87,10 +118,14 @@ The following controls are available during simulation:
 | **TAB / SHIFT+TAB** | Select and follow the next / previous body  |
 | **R**               | Frame the whole system                      |
 | **SPACE**           | Pause                                       |
-| **→**               | Increase simulation speed                   |
-| **←**               | Decrease simulation speed                   |
+| **RIGHT**           | Increase simulation speed                   |
+| **LEFT**            | Decrease simulation speed                   |
 | **C**               | Open the body creator                       |
+| **O**               | Save the simulation                         |
+| **M**               | Back to the main menu                       |
 | **T**               | Toggle trayectories                         |
+| **K**               | Toggle height lines                         |
+| **L**               | Toggle lighting                             |
 | **N**               | Toggle body names                           |
 | **G**               | Toggle grid                                 |
 | **I**               | Toggle debug information                    |
@@ -115,6 +150,18 @@ The form opens filled with the position of the camera focus, and with the veloci
 body being followed when there is one, so creating a satellite is a matter of adding a few
 km/s to the velocity it inherits.
 
+### Height lines
+Depth is hard to judge on a screen, so every body draws a vertical line down to the
+horizontal plane, with a small cross where it lands. The line is solid for the bodies above
+the plane and dashed for the ones below it, which is enough to tell at a glance whether an
+orbit is tilted up or down.
+
+### Lighting
+Bodies over 1e28 kg are treated as stars: they light the rest instead of being lit. A body is
+drawn with the half facing the brightest star in its own color and the other half black, so
+the phase of a planet shows where its star is. `L`, or the `Light` button, turns it off and
+goes back to flat colors.
+
 ## How it works
 - **Logical state and rendering are separate.** The simulation keeps positions, velocities
   and masses in SI units and double precision (`Vec3`, meters, m/s, kg), and it never uses
@@ -124,7 +171,14 @@ km/s to the velocity it inherits.
 - **Leapfrog integration with substeps.** Each frame of simulated time is integrated in
   kick-drift-kick substeps of at most one hour, which keeps the energy of the system stable
   even at the highest simulation speeds. The debug line shows the energy drift.
-- **Parallel forces.** The O(n²) force computation is split between POSIX threads by body
+- **Parallel forces.** The O(n^2) force computation is split between POSIX threads by body
   index: every worker writes only to its own range of bodies, so no locks are needed. The
-  threads are created once and parked on a condition variable, and small systems fall back
-  to a single thread where synchronizing would cost more than it saves.
+  threads are created once and parked on a condition variable, and how many of them a step
+  wakes up is decided from the number of bodies.
+- **Two frames of reference.** The simulation is z up, because that is what the json files
+  describe, and the renderer is y up, because that is where raylib puts the poles of its
+  spheres. The conversion is a single axis swap in `to_render()`, and it is also what keeps
+  every body drawn with its poles on the vertical axis of the scene.
+- **The interface is immediate mode.** `widgets.c` draws a button and reports what the mouse
+  did with it in the same call, so the toolbar, the menu, the creator and the save dialog
+  are plain functions with no retained state to keep in sync.

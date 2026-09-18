@@ -1,16 +1,14 @@
 #include "creator.h"
 #include "physics.h"
+#include "widgets.h"
 
-#include <ctype.h>
-#include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 
 #define ROW_HEIGHT      26.0f
 #define PANEL_WIDTH     320.0f
 #define PANEL_TOP       210.0f
 #define LABEL_WIDTH     110.0f
-#define REPEAT_DELAY    0.4
-#define REPEAT_RATE     0.04
 #define MESSAGE_TIME    4.0
 
 static const char* labels[CREATOR_FIELDS] = {
@@ -24,7 +22,7 @@ Rectangle creator_area(void)
         GetScreenWidth() - PANEL_WIDTH - 20.0f,
         PANEL_TOP,
         PANEL_WIDTH,
-        CREATOR_FIELDS * ROW_HEIGHT + 110.0f
+        CREATOR_FIELDS * ROW_HEIGHT + 140.0f
     };
 }
 
@@ -99,26 +97,9 @@ void creator_close(Creator* creator)
     creator->active = false;
 }
 
-static bool parse_number(const char* text, double* out)
-{
-    char* end = NULL;
-    double value = strtod(text, &end);
-    if(end == text){
-        return false;
-    }
-    while(isspace((unsigned char)*end)){
-        end++;
-    }
-    if(*end != '\0'){
-        return false;
-    }
-    *out = value;
-    return true;
-}
-
 static bool read_field(Creator* creator, int field, double* out)
 {
-    if(!parse_number(creator->values[field], out)){
+    if(!ui_parse(creator->values[field], out)){
         creator->field = field;
         set_message(creator, TextFormat("invalid %s", labels[field]), true);
         return false;
@@ -178,24 +159,6 @@ static void creator_submit(Creator* creator, Simulation* simulation, DisplayFlag
     creator->field = FIELD_NAME;
 }
 
-// Numeric fields only take what strtod can read back
-static bool valid_char(int field, int key)
-{
-    if(field == FIELD_NAME){
-        return key >= 32 && key < 127;
-    }
-    return isdigit(key) || key == '.' || key == '-' || key == '+' || key == 'e' || key == 'E';
-}
-
-static void erase_char(Creator* creator)
-{
-    char* text = creator->values[creator->field];
-    size_t length = strlen(text);
-    if(length > 0){
-        text[length - 1] = '\0';
-    }
-}
-
 static void move_field(Creator* creator, int step)
 {
     creator->field = (creator->field + CREATOR_FIELDS + step) % CREATOR_FIELDS;
@@ -210,28 +173,7 @@ bool creator_update(Creator* creator, Simulation* simulation, DisplayFlags* flag
         return false;
     }
 
-    int key = GetCharPressed();
-    while(key > 0){
-        char* text = creator->values[creator->field];
-        size_t length = strlen(text);
-        if(valid_char(creator->field, key) && length < CREATOR_TEXT_LEN - 1){
-            text[length] = (char)key;
-            text[length + 1] = '\0';
-        }
-        key = GetCharPressed();
-    }
-
-    if(IsKeyPressed(KEY_BACKSPACE)){
-        erase_char(creator);
-        creator->repeat = REPEAT_DELAY;
-    }
-    else if(IsKeyDown(KEY_BACKSPACE)){
-        creator->repeat -= GetFrameTime();
-        if(creator->repeat <= 0.0){
-            erase_char(creator);
-            creator->repeat = REPEAT_RATE;
-        }
-    }
+    ui_edit(creator->values[creator->field], CREATOR_TEXT_LEN, creator->field != FIELD_NAME, &creator->repeat);
 
     bool shift = IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT);
     if(IsKeyPressed(KEY_TAB)){
@@ -253,15 +195,13 @@ bool creator_update(Creator* creator, Simulation* simulation, DisplayFlags* flag
     // Clicking a field selects it, clicking the panel never reaches the
     // camera or the body picker
     if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){
-        Vector2 mouse = GetMousePosition();
         for(int field = 0; field < CREATOR_FIELDS; field++){
-            if(CheckCollisionPointRec(mouse, field_area(field))){
+            if(ui_mouse_in(field_area(field))){
                 creator->field = field;
                 break;
             }
         }
     }
-
     return true;
 }
 
@@ -274,18 +214,19 @@ GhostBody creator_ghost(const Creator* creator, const Simulation* simulation)
 
     double position[3] = {0};
     for(int i = 0; i < 3; i++){
-        if(!parse_number(creator->values[FIELD_POS_X + i], &position[i])){
+        if(!ui_parse(creator->values[FIELD_POS_X + i], &position[i])){
             return ghost;
         }
     }
     double radius = 0.0;
-    if(!parse_number(creator->values[FIELD_RADIUS], &radius)){
+    if(!ui_parse(creator->values[FIELD_RADIUS], &radius)){
         return ghost;
     }
     double channels[3] = {0};
     for(int i = 0; i < 3; i++){
-        parse_number(creator->values[FIELD_COLOR_R + i], &channels[i]);
+        ui_parse(creator->values[FIELD_COLOR_R + i], &channels[i]);
     }
+
     ghost.visible  = true;
     ghost.position = vec3_scale(vec3(position[0], position[1], position[2]), AU);
     ghost.radius   = simulation->scale > 0.0 ? radius / simulation->scale : radius;  // file units -> AU
@@ -293,49 +234,45 @@ GhostBody creator_ghost(const Creator* creator, const Simulation* simulation)
     return ghost;
 }
 
-void creator_draw(const Creator* creator)
+// The buttons of the form are resolved here, the same way the toolbar does
+void creator_draw(Creator* creator, Simulation* simulation, DisplayFlags* flags)
 {
     if(!creator->active){
         // Keep the last result visible for a moment after closing the form
         if(creator->message_time > 0.0){
-            DrawText(creator->message, TEXT_X, TEXT_Y + 3 * TEXT_OFFSET, TEXT_SIZE - 4,
+            DrawText(creator->message, (int)TEXT_X, TEXT_Y + 3 * TEXT_OFFSET, TEXT_SIZE - 4,
                 creator->message_error ? ORANGE : GREEN);
         }
         return;
     }
 
     Rectangle area = creator_area();
-    draw_panel(area, "NEW BODY");
+    ui_panel(area, "NEW BODY");
 
     for(int field = 0; field < CREATOR_FIELDS; field++){
-        Rectangle box = field_area(field);
-        bool active = field == creator->field;
-
-        DrawText(labels[field], (int)area.x + 10, (int)box.y + 4, TEXT_SIZE - 6, (Color){ 170, 170, 180, 255 });
-        DrawRectangleRec(box, active ? (Color){ 40, 40, 60, 255 } : (Color){ 24, 24, 32, 255 });
-        DrawRectangleLinesEx(box, 1.0f, active ? SKYBLUE : (Color){ 60, 60, 75, 255 });
-
-        const char* text = creator->values[field];
-        if(active && fmod(GetTime(), 1.0) < 0.5){
-            text = TextFormat("%s_", text);
-        }
-        DrawText(text, (int)box.x + 6, (int)box.y + 4, TEXT_SIZE - 6, RAYWHITE);
+        ui_field(field_area(field), labels[field], creator->values[field], field == creator->field);
     }
 
     // Color preview
-    Rectangle swatch = { area.x + 10, area.y + area.height - 58.0f, 22.0f, 22.0f };
+    float bottom = area.y + area.height;
+    Rectangle swatch = { area.x + 12.0f, bottom - 78.0f, 24.0f, 24.0f };
     double channels[3] = {0};
     for(int i = 0; i < 3; i++){
-        parse_number(creator->values[FIELD_COLOR_R + i], &channels[i]);
+        ui_parse(creator->values[FIELD_COLOR_R + i], &channels[i]);
     }
     DrawRectangleRec(swatch, (Color){ to_channel(channels[0]), to_channel(channels[1]), to_channel(channels[2]), 255 });
-    DrawRectangleLinesEx(swatch, 1.0f, (Color){ 90, 90, 110, 255 });
+    DrawRectangleLinesEx(swatch, 1.0f, ui_color_line());
 
-    DrawText("ENTER create   TAB next   ESC close",
-        (int)area.x + 40, (int)area.y + (int)area.height - 52, TEXT_SIZE - 6, (Color){ 150, 150, 160, 255 });
+    float button = (area.width - 24.0f - 8.0f) * 0.5f;
+    if(ui_button((Rectangle){ area.x + 12.0f, bottom - 44.0f, button, 30.0f }, "Close", false)){
+        creator_close(creator);
+    }
+    if(ui_button((Rectangle){ area.x + 20.0f + button, bottom - 44.0f, button, 30.0f }, "Create", false)){
+        creator_submit(creator, simulation, flags);
+    }
 
     if(creator->message_time > 0.0){
-        DrawText(creator->message, (int)area.x + 10, (int)area.y + (int)area.height - 26, TEXT_SIZE - 6,
+        DrawText(creator->message, (int)area.x + 46, (int)bottom - 74, UI_SMALL,
             creator->message_error ? ORANGE : GREEN);
     }
 }

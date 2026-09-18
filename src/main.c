@@ -9,83 +9,37 @@
 #include "threadpool.h"
 #include "gui.h"
 #include "creator.h"
+#include "saver.h"
+#include "menu.h"
 #include "loader.h"
 
 const int screenWidth = 1200;
 const int screenHeight = 750;
 
-#define MAX_SIM_SPEED   10000000.0
 #define MAX_FRAME_TIME  0.1         // s, keeps a stall from jumping the simulation
 #define ENERGY_PERIOD   30          // frames between energy measurements
-#define MIN_BODY_SCALE  0.02f
-#define MAX_BODY_SCALE  500.0f
+#define DEFAULT_SCALE   250000.0
 
-typedef struct {
-    const char* file;
-    unsigned    threads;    // 0 selects one thread per processor
-} Options;
+typedef enum {
+    APP_MENU = 0,
+    APP_SIM
+} AppState;
 
-static Options parse_args(int argc, char** argv)
-{
-    Options options = { .file = NULL, .threads = 0 };
-
-    for(int i = 1; i < argc; i++){
-        if(strcmp(argv[i], "-t") == 0 && i + 1 < argc){
-            options.threads = (unsigned)strtoul(argv[++i], NULL, 10);
-        }
-        else if(options.file == NULL){
-            options.file = argv[i];
-        }
-        else{
-            options.file = NULL;
-            break;
-        }
-    }
-
-    if(options.file == NULL || !strstr(options.file, ".json")){
-        printf("Use: %s <simulation.json> [-t threads]\n", argv[0]);
-        printf("  -t threads   worker threads of the simulation (default: one per core)\n");
-        exit(0);
-    }
-    return options;
-}
-
-static void cycle_selection(Simulation* simulation, OrbitCamera* camera, DisplayFlags* flags, int step)
-{
-    if(simulation->count == 0){
-        return;
-    }
-    int count = (int)simulation->count;
-    int next = flags->selected < 0 ? 0 : (flags->selected + count + step) % count;
-    flags->selected = next;
-    follow_body(camera, simulation, next);
-}
-
-static void handle_input(Simulation* simulation, OrbitCamera* camera, DisplayFlags* flags, Creator* creator, bool* quit)
+static void handle_input(Simulation* simulation, OrbitCamera* camera, DisplayFlags* flags, UiAction* action)
 {
     if(IsKeyPressed(KEY_F11)){
         ToggleFullscreen();
     }
     if(IsKeyPressed(KEY_ESCAPE)){
-        *quit = true;
+        *action = ACTION_QUIT;
     }
 
     // Time controls
     if(IsKeyPressed(KEY_RIGHT)){
-        if(flags->t_speed > 0.0 && flags->t_speed < MAX_SIM_SPEED){
-            flags->t_speed *= 10.0;
-        }
-        else if(flags->t_speed < 1.0){
-            flags->t_speed = 1.0;
-        }
+        speed_up(flags);
     }
     if(IsKeyPressed(KEY_LEFT)){
-        if(flags->t_speed > 1.0){
-            flags->t_speed /= 10.0;
-        }
-        else{
-            flags->t_speed = 0.0;
-        }
+        speed_down(flags);
     }
     if(IsKeyPressed(KEY_SPACE)){
         flags->paused = !flags->paused;
@@ -97,6 +51,12 @@ static void handle_input(Simulation* simulation, OrbitCamera* camera, DisplayFla
         if(flags->display_trayectory){
             clear_trayectories(simulation);
         }
+    }
+    if(IsKeyPressed(KEY_K)){
+        flags->height_lines = !flags->height_lines;
+    }
+    if(IsKeyPressed(KEY_L)){
+        flags->lighting = !flags->lighting;
     }
     if(IsKeyPressed(KEY_I)){
         flags->debug = !flags->debug;
@@ -111,10 +71,10 @@ static void handle_input(Simulation* simulation, OrbitCamera* camera, DisplayFla
         flags->help = !flags->help;
     }
     if(IsKeyPressed(KEY_B)){
-        flags->body_scale = Clamp(flags->body_scale * 1.25f, MIN_BODY_SCALE, MAX_BODY_SCALE);
+        scale_bodies(flags, 1.25f);
     }
     if(IsKeyPressed(KEY_V)){
-        flags->body_scale = Clamp(flags->body_scale / 1.25f, MIN_BODY_SCALE, MAX_BODY_SCALE);
+        scale_bodies(flags, 1.0f / 1.25f);
     }
 
     // Camera targets
@@ -134,29 +94,58 @@ static void handle_input(Simulation* simulation, OrbitCamera* camera, DisplayFla
         cycle_selection(simulation, camera, flags, back ? -1 : 1);
     }
 
-    // Body creator
+    // Panels
     if(IsKeyPressed(KEY_C)){
-        creator_open(creator, simulation, camera);
+        *action = ACTION_CREATOR;
     }
+    if(IsKeyPressed(KEY_O)){
+        *action = ACTION_SAVE;
+    }
+    if(IsKeyPressed(KEY_M)){
+        *action = ACTION_MENU;
+    }
+}
+
+static DisplayFlags default_flags(void)
+{
+    DisplayFlags flags = {0};
+    flags.t_speed = 1.0;
+    flags.debug = true;
+    flags.names = true;
+    flags.grid = true;
+    flags.display_trayectory = true;
+    flags.height_lines = true;
+    flags.lighting = true;
+    flags.body_scale = 1.0f;
+    flags.selected = -1;
+    return flags;
 }
 
 int main(int argc, char** argv)
 {
-    Options options = parse_args(argc, argv);
-
     Simulation* simulation = malloc(sizeof(Simulation));
     if(simulation == NULL){
         fprintf(stderr, "Could not allocate simulation.\n");
         exit(1);
     }
+    *simulation = (Simulation){0};
+    simulation->scale = DEFAULT_SCALE;
 
-    if(load_simulation(simulation, options.file)){
-        fprintf(stderr, "Error loading the file.\n");
-        free(simulation);
-        exit(1);
+    // A file on the command line opens straight into the simulation, with
+    // no arguments the program starts on the main menu
+    bool loaded = false;
+    if(argc > 1){
+        if(load_simulation(simulation, argv[1])){
+            fprintf(stderr, "Error loading the file.\n");
+            free(simulation);
+            exit(1);
+        }
+        loaded = true;
     }
 
-    ThreadPool* pool = threadpool_create(options.threads);
+    // The pool holds one worker per processor, how many of them a step
+    // actually uses depends on the number of bodies
+    ThreadPool* pool = threadpool_create(0);
     if(pool == NULL){
         fprintf(stderr, "Warning: could not create the thread pool, running single threaded.\n");
     }
@@ -169,21 +158,25 @@ int main(int argc, char** argv)
     OrbitCamera camera;
     init_camera(&camera, simulation);
 
-    DisplayFlags flags = {0};
-    flags.t_speed = 1.0;
-    flags.debug = true;
-    flags.names = true;
-    flags.grid = true;
-    flags.display_trayectory = true;
-    flags.body_scale = 1.0f;
-    flags.selected = -1;
+    DisplayFlags flags = default_flags();
+    SimStats stats = {0};
+    stats.energy0 = simulation_energy(simulation);
+    stats.energy = stats.energy0;
 
     Creator creator;
     creator_init(&creator);
+    Saver saver;
+    saver_init(&saver);
+    Menu menu;
+    menu_init(&menu);
+    if(argc > 1){
+        snprintf(menu.source, PATH_LEN, "%s", GetFileName(argv[1]));
+    }
 
-    SimStats stats = { .threads = threadpool_size(pool), .energy = 0.0, .energy0 = 0.0 };
-    stats.energy0 = simulation_energy(simulation);
-    stats.energy = stats.energy0;
+    AppState state = loaded ? APP_SIM : APP_MENU;
+    if(state == APP_MENU){
+        menu_open(&menu, false);
+    }
 
     bool quit = false;
     int frame = 0;
@@ -191,16 +184,51 @@ int main(int argc, char** argv)
 
     while(!WindowShouldClose() && !quit){
 
-        bool typing = creator_update(&creator, simulation, &flags);
-        if(!typing){
-            handle_input(simulation, &camera, &flags, &creator, &quit);
+        if(state == APP_MENU){
+            begin_frame();
+            MenuResult result = menu_run(&menu, simulation);
+            end_frame();
+
+            if(result == MENU_START){
+                init_camera(&camera, simulation);
+                flags = default_flags();
+                creator_close(&creator);
+                saver_close(&saver);
+                saver_init(&saver);
+                snprintf(saver.name, PATH_LEN, "%s", menu.source);
+                bodies = simulation->count;
+                stats.energy0 = simulation_energy(simulation);
+                stats.energy = stats.energy0;
+                state = APP_SIM;
+            }
+            else if(result == MENU_RESUME){
+                state = APP_SIM;
+            }
+            else if(result == MENU_QUIT){
+                quit = true;
+            }
+            continue;
         }
 
-        bool over_panel = creator.active && CheckCollisionPointRec(GetMousePosition(), creator_area());
-        update_camera(&camera, simulation, !over_panel, !typing);
+        UiAction action = ACTION_NONE;
+
+        // Forms take the keyboard while they are open
+        bool typing = saver_update(&saver, simulation);
+        if(!saver.active){
+            typing = creator_update(&creator, simulation, &flags) || typing;
+        }
+        if(!typing){
+            handle_input(simulation, &camera, &flags, &action);
+        }
+
+        bool over_ui = ui_mouse_in(toolbar_area())
+                    || (creator.active && ui_mouse_in(creator_area()))
+                    || (saver.active && ui_mouse_in(saver_area()));
+
+        update_camera(&camera, simulation, !over_ui, !typing);
 
         // A short click that did not orbit the camera selects a body
-        if(!over_panel && IsMouseButtonReleased(MOUSE_BUTTON_LEFT) && camera.drag < CLICK_SLOP){
+        if(!over_ui && IsMouseButtonReleased(MOUSE_BUTTON_LEFT) && camera.drag < CLICK_SLOP){
             flags.selected = pick_body(&camera, simulation, GetMousePosition());
         }
 
@@ -221,13 +249,42 @@ int main(int argc, char** argv)
         if(flags.debug && frame % ENERGY_PERIOD == 0){
             stats.energy = simulation_energy(simulation);
         }
+        stats.threads = threads_for_bodies(simulation->count);
 
         GhostBody ghost = creator_ghost(&creator, simulation);
         begin_frame();
             draw_scene(&camera, simulation, &flags, &ghost);
             draw_hud(&camera, simulation, &flags, &stats);
-            creator_draw(&creator);
+            creator_draw(&creator, simulation, &flags);
+            saver_draw(&saver, simulation);
+            UiAction clicked = draw_toolbar(&camera, simulation, &flags);
         end_frame();
+
+        if(clicked != ACTION_NONE){
+            action = clicked;
+        }
+
+        switch(action){
+            case ACTION_CREATOR:
+                saver_close(&saver);
+                creator_open(&creator, simulation, &camera);
+                break;
+            case ACTION_SAVE:
+                creator_close(&creator);
+                saver_open(&saver, saver.name);
+                break;
+            case ACTION_MENU:
+                creator_close(&creator);
+                saver_close(&saver);
+                menu_open(&menu, true);
+                state = APP_MENU;
+                break;
+            case ACTION_QUIT:
+                quit = true;
+                break;
+            default:
+                break;
+        }
 
         frame++;
     }
