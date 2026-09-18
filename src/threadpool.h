@@ -21,9 +21,10 @@ ThreadPool* threadpool_create(unsigned threads);
 void threadpool_destroy(ThreadPool* pool);
 unsigned threadpool_size(const ThreadPool* pool);
 
-// Runs task over [0, items) split between the calling thread and the workers,
-// returns once every chunk is done. Ranges smaller than min_items are run
-// serially, parallelizing them would cost more than it saves.
-void threadpool_run(ThreadPool* pool, ThreadTask task, void* arg, unsigned items, unsigned min_items);
+// Runs task over [0, items) split between the calling thread and threads - 1
+// workers, and returns once every chunk is done. threads is clamped to the
+// size of the pool, and a value of 1 runs the task on the calling thread
+// without waking anyone up.
+void threadpool_run(ThreadPool* pool, ThreadTask task, void* arg, unsigned items, unsigned threads);
 
 #endif

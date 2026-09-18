@@ -28,6 +28,7 @@ struct ThreadPool {
     ThreadTask      task;
     void*           arg;
     unsigned        items;
+    unsigned        active;         // threads taking part in the current job
     unsigned long   generation;     // bumped once per job
     unsigned        pending;        // workers still running the current job
     bool            stop;
@@ -35,16 +36,22 @@ struct ThreadPool {
 
 unsigned cpu_count(void)
 {
+    // Asked for on every step, and it never changes
+    static unsigned cached = 0;
+    if(cached > 0){
+        return cached;
+    }
 #if defined(_WIN32)
     SYSTEM_INFO info;
     GetSystemInfo(&info);
-    return info.dwNumberOfProcessors > 0 ? (unsigned)info.dwNumberOfProcessors : 1;
+    cached = info.dwNumberOfProcessors > 0 ? (unsigned)info.dwNumberOfProcessors : 1;
 #elif defined(_SC_NPROCESSORS_ONLN)
     long count = sysconf(_SC_NPROCESSORS_ONLN);
-    return count > 0 ? (unsigned)count : 1;
+    cached = count > 0 ? (unsigned)count : 1;
 #else
-    return 1;
+    cached = 1;
 #endif
+    return cached;
 }
 
 // Every thread derives its own slice from its id, the remainder is spread
@@ -79,10 +86,14 @@ static void* worker_main(void* data)
         ThreadTask task = pool->task;
         void* arg       = pool->arg;
         unsigned items  = pool->items;
-        unsigned size   = pool->size;
+        unsigned active = pool->active;
         pthread_mutex_unlock(&pool->mutex);
 
-        run_chunk(task, arg, items, worker->id, size);
+        // Jobs that need fewer threads than the pool has leave the extra
+        // workers with nothing to do
+        if(worker->id < active){
+            run_chunk(task, arg, items, worker->id, active);
+        }
 
         pthread_mutex_lock(&pool->mutex);
         pool->pending--;
@@ -174,26 +185,30 @@ unsigned threadpool_size(const ThreadPool* pool)
     return pool == NULL ? 1 : pool->size;
 }
 
-void threadpool_run(ThreadPool* pool, ThreadTask task, void* arg, unsigned items, unsigned min_items)
+void threadpool_run(ThreadPool* pool, ThreadTask task, void* arg, unsigned items, unsigned threads)
 {
     if(items == 0){
         return;
     }
-    if(pool == NULL || pool->size <= 1 || items < min_items){
+    if(pool == NULL || pool->size <= 1 || threads <= 1){
         task(arg, 0, items, 0);
         return;
+    }
+    if(threads > pool->size){
+        threads = pool->size;
     }
 
     pthread_mutex_lock(&pool->mutex);
     pool->task    = task;
     pool->arg     = arg;
     pool->items   = items;
+    pool->active  = threads;
     pool->pending = pool->size - 1;
     pool->generation++;
     pthread_cond_broadcast(&pool->ready);
     pthread_mutex_unlock(&pool->mutex);
 
-    run_chunk(task, arg, items, 0, pool->size);
+    run_chunk(task, arg, items, 0, threads);
 
     pthread_mutex_lock(&pool->mutex);
     while(pool->pending > 0){

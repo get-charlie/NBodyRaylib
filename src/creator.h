@@ -55,6 +55,6 @@ Rectangle creator_area(void);
 
 // Wireframe preview of the body being edited
 GhostBody creator_ghost(const Creator* creator, const Simulation* simulation);
-void creator_draw(const Creator* creator);
+void creator_draw(Creator* creator, Simulation* simulation, DisplayFlags* flags);
 
 #endif
