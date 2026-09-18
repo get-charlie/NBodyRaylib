@@ -39,6 +39,27 @@ static cJSON* parse_json(const char * jsondata)
     return json;
 }
 
+// The z component is optional so the 2D simulations written for the old
+// version keep working, they just run on the z = 0 plane.
+static int get_vector(const cJSON* object, Vec3* out)
+{
+    cJSON* x = cJSON_GetObjectItemCaseSensitive(object, "x");
+    cJSON* y = cJSON_GetObjectItemCaseSensitive(object, "y");
+    cJSON* z = cJSON_GetObjectItemCaseSensitive(object, "z");
+
+    if(!cJSON_IsNumber(x) || !cJSON_IsNumber(y)){
+        return 1;
+    }
+    if(z != NULL && !cJSON_IsNumber(z)){
+        return 1;
+    }
+
+    out->x = x->valuedouble;
+    out->y = y->valuedouble;
+    out->z = cJSON_IsNumber(z) ? z->valuedouble : 0.0;
+    return 0;
+}
+
 // returns 1 if an error is found
 int load_simulation(Simulation* simulation, const char* path)
 {
@@ -57,9 +78,9 @@ int load_simulation(Simulation* simulation, const char* path)
     }
     
     cJSON* scale = cJSON_GetObjectItemCaseSensitive(json, "scale");
-    if(!cJSON_IsNumber(scale)){
+    if(!cJSON_IsNumber(scale) || scale->valuedouble <= 0.0){
         cJSON_Delete(json);
-        fprintf(stderr, "Error: time must me a number\n");
+        fprintf(stderr, "Error: scale must be a positive number\n");
         return 1;
     }
     simulation->scale = scale->valuedouble;
@@ -103,19 +124,15 @@ int load_simulation(Simulation* simulation, const char* path)
             return 1;
         }
 
-        cJSON* x = cJSON_GetObjectItemCaseSensitive(position, "x");
-        cJSON* y = cJSON_GetObjectItemCaseSensitive(position, "y");
-
-        if(!cJSON_IsNumber(x) || !cJSON_IsNumber(y)){
+        Vec3 pos = {0};
+        if(get_vector(position, &pos)){
             fprintf(stderr, "Error: Invalid position data in body object\n");
             cJSON_Delete(json);
             return 1;
         }
 
-        cJSON* vx = cJSON_GetObjectItemCaseSensitive(velocity, "x");
-        cJSON* vy = cJSON_GetObjectItemCaseSensitive(velocity, "y");
-
-        if(!cJSON_IsNumber(vx) || !cJSON_IsNumber(vy)){
+        Vec3 vel = {0};
+        if(get_vector(velocity, &vel)){
             fprintf(stderr, "Error: Invalid velocity data in body object\n");
             cJSON_Delete(json);
             return 1;
@@ -125,13 +142,15 @@ int load_simulation(Simulation* simulation, const char* path)
         Body simbody = new_body(
             name->valuestring,  col,
             mass->valuedouble,  radius->valuedouble,
-            x->valuedouble,     y->valuedouble,
-            vx->valuedouble,    vy->valuedouble,
+            pos,                vel,
             simulation->scale
         );
-        add_simulation_body(simulation, simbody);
+        if(!add_simulation_body(simulation, simbody)){
+            fprintf(stderr, "Error: too many bodies, the limit is %d\n", MAX_BODIES);
+            cJSON_Delete(json);
+            return 1;
+        }
     }
     cJSON_Delete(json);
     return 0;
 }
-

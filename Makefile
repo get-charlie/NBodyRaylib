@@ -7,8 +7,16 @@ SRCS = $(wildcard $(SRC)/*.c)
 OBJS = $(SRCS:.c=.o)
 
 CC = gcc
-CFLAGS = -I$(INC) -DGRAPHICS_API_OPENGL_33 -Wall -Wextra
-LIBS = -lraylib -lGL -lm -lpthread -ldl -lrt -lX11
+CFLAGS = -I$(INC) -DGRAPHICS_API_OPENGL_33 -Wall -Wextra -O2 -pthread
+
+UNAME_S := $(shell uname -s)
+ifeq ($(UNAME_S),Darwin)
+	LIBS = -lraylib -lm -lpthread -framework CoreVideo -framework IOKit -framework Cocoa -framework OpenGL
+else ifneq (,$(findstring MINGW,$(UNAME_S)))
+	LIBS = -lraylib -lopengl32 -lgdi32 -lwinmm -lm -lpthread
+else
+	LIBS = -lraylib -lGL -lm -lpthread -ldl -lrt -lX11
+endif
 
 all: $(PROJECT)
 
@@ -21,6 +29,4 @@ $(PROJECT): $(OBJS)
 clean:
 	rm -f $(SRC)/*.o $(PROJECT)
 
-
-
-
+.PHONY: all clean
